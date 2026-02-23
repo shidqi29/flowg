@@ -1,6 +1,6 @@
 {
   "name": "flowgeneration",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Zero-bloat, attribute-driven animation library. CSS-first with optional GSAP power.",
   "keywords": [
