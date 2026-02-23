@@ -16,14 +16,14 @@
   ],
   "license": "MIT",
   "author": "FlowG Contributors",
-  "homepage": "https://github.com/nicepkg/flowg#readme",
+  "homepage": "https://github.com/shidqi29/flowg/blob/main/flowg/packages/flowg/README.md",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nicepkg/flowg.git",
+    "url": "https://github.com/shidqi29/flowg.git",
     "directory": "packages/flowg"
   },
   "bugs": {
-    "url": "https://github.com/nicepkg/flowg/issues"
+    "url": "https://github.com/shidqi29/flowg/issues"
   },
   "sideEffects": [
     "*.css",
