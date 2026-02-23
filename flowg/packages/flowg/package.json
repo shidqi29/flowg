@@ -1,5 +1,5 @@
 {
-  "name": "flowg",
+  "name": "flowgeneration",
   "version": "0.1.0",
   "type": "module",
   "description": "Zero-bloat, attribute-driven animation library. CSS-first with optional GSAP power.",

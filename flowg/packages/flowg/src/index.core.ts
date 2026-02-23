@@ -4,7 +4,7 @@
 //
 // Usage:
 //   <script type="module">
-//     import { initCore } from 'flowg/core';
+//     import { initCore } from 'flowgeneration/core';
 //     initCore();
 //   </script>
 //

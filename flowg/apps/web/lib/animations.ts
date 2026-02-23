@@ -74,11 +74,11 @@ export function generateScriptTag(animationType: string): string {
 
   if (anim.engine === "gsap") {
     return `<!-- FlowG Pro Engine (includes GSAP) -->
-<script src="https://cdn.jsdelivr.net/npm/flowg/dist/flowg-pro.iife.js"></script>`;
+<script src="https://cdn.jsdelivr.net/npm/flowgeneration/dist/flowg-pro.iife.js"></script>`;
   }
 
   return `<!-- FlowG Core Engine (~2KB gzipped) -->
-<script src="https://cdn.jsdelivr.net/npm/flowg/dist/flowg-core.iife.js"></script>`;
+<script src="https://cdn.jsdelivr.net/npm/flowgeneration/dist/flowg-core.iife.js"></script>`;
 }
 
 /**

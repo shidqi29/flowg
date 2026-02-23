@@ -3,9 +3,9 @@
 **Zero-bloat, attribute-driven animation library.**
 CSS-first with optional GSAP power.
 
-[![npm version](https://img.shields.io/npm/v/flowg.svg)](https://www.npmjs.com/package/flowg)
-[![gzip size](https://img.shields.io/bundlephobia/minzip/flowg)](https://bundlephobia.com/package/flowg)
-[![license](https://img.shields.io/npm/l/flowg.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/flowgeneration.svg)](https://www.npmjs.com/package/flowgeneration)
+[![gzip size](https://img.shields.io/bundlephobia/minzip/flowgeneration)](https://bundlephobia.com/package/flowgeneration)
+[![license](https://img.shields.io/npm/l/flowgeneration.svg)](./LICENSE)
 
 ---
 
@@ -20,17 +20,17 @@ CSS-first with optional GSAP power.
 ## Installation
 
 ```bash
-npm install flowg
+npm install flowgeneration
 # or
-pnpm add flowg
+pnpm add flowgeneration
 # or
-yarn add flowg
+yarn add flowgeneration
 ```
 
 For GSAP-powered animations (Pro engine):
 
 ```bash
-npm install flowg gsap
+npm install flowgeneration gsap
 ```
 
 ## Quick Start
@@ -38,8 +38,8 @@ npm install flowg gsap
 ### CSS-Only (Core Engine)
 
 ```js
-import { initCore } from "flowg/core";
-import "flowg/style.css";
+import { initCore } from "flowgeneration/core";
+import "flowgeneration/style.css";
 
 initCore();
 ```
@@ -51,8 +51,8 @@ initCore();
 ### With GSAP (Pro Engine)
 
 ```js
-import { initPro } from "flowg/pro";
-import "flowg/style.css";
+import { initPro } from "flowgeneration/pro";
+import "flowgeneration/style.css";
 
 initPro();
 ```
@@ -67,9 +67,9 @@ initPro();
 
 ```html
 <!-- Core only (~2KB gzip) -->
-<link rel="stylesheet" href="https://unpkg.com/flowg/dist/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/flowgeneration/dist/style.css" />
 <script type="module">
-  import { initCore } from "https://unpkg.com/flowg/dist/flowg-core.js";
+  import { initCore } from "https://unpkg.com/flowgeneration/dist/flowg-core.js";
   initCore();
 </script>
 
@@ -108,8 +108,8 @@ import {
   reset,
   CSS_ANIMATIONS,
   ANIMATION_REGISTRY,
-} from "flowg/core";
-import { initPro, GSAP_ANIMATIONS } from "flowg/pro";
+} from "flowgeneration/core";
+import { initPro, GSAP_ANIMATIONS } from "flowgeneration/pro";
 
 // Manually trigger an element
 activate(document.querySelector("#my-el"));
