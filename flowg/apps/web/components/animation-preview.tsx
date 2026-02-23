@@ -39,7 +39,7 @@ export function AnimationPreview({
   const delSec = /^\d+(\.\d+)?$/.test(delay) ? `${delay}s` : delay;
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-muted/30 min-h-40 flex items-center justify-center">
+    <div className="relative overflow-hidden rounded-lg border border-border bg-muted/30 min-h-28 sm:min-h-40 flex items-center justify-center">
       <div
         ref={ref}
         data-anim={animation.name}
@@ -51,11 +51,11 @@ export function AnimationPreview({
             "--fg-ease": ease,
           } as React.CSSProperties
         }>
-        <div className="text-center px-6 py-4">
-          <p className="text-lg font-semibold text-foreground">
+        <div className="text-center px-4 py-3 sm:px-6 sm:py-4">
+          <p className="text-sm sm:text-lg font-semibold text-foreground">
             {animation.label}
           </p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
             {animation.description}
           </p>
         </div>
@@ -64,7 +64,7 @@ export function AnimationPreview({
       {/* Replay button */}
       <button
         onClick={play}
-        className="absolute bottom-2 right-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-2 py-1 rounded-md bg-background/80 border border-border">
+        className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 text-[10px] sm:text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md bg-background/80 border border-border">
         ↻ Replay
       </button>
     </div>

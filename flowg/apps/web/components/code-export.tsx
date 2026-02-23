@@ -34,15 +34,15 @@ export function CodeExport({ animation, config }: CodeExportProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start sm:items-center justify-between gap-2 flex-col sm:flex-row">
         <h3 className="font-semibold text-sm text-foreground">Code Export</h3>
         <Badge
           variant="outline"
-          className={
+          className={`shrink-0 ${
             animation.engine === "css"
               ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
               : "bg-violet-500/15 text-violet-700 dark:text-violet-400 border-violet-500/20"
-          }>
+          }`}>
           {animation.engine === "css"
             ? "Core (~2KB)"
             : "Pro (~45KB, includes GSAP)"}
@@ -62,12 +62,12 @@ export function CodeExport({ animation, config }: CodeExportProps) {
       )}
 
       <div className="relative">
-        <pre className="rounded-lg bg-muted p-4 text-xs overflow-x-auto leading-relaxed">
+        <pre className="rounded-lg bg-muted p-3 sm:p-4 text-[11px] sm:text-xs overflow-x-auto leading-relaxed">
           <code>{fullSnippet}</code>
         </pre>
         <button
           onClick={handleCopy}
-          className="absolute top-2 right-2 text-xs px-2 py-1 rounded-md bg-background/80 border border-border text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+          className="absolute top-2 right-2 text-[10px] sm:text-xs px-2 py-1 rounded-md bg-background/80 border border-border text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>

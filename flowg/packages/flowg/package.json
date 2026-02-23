@@ -1,40 +1,68 @@
 {
-  "name": "@repo/flowg",
+  "name": "flowg",
   "version": "0.1.0",
   "type": "module",
-  "private": true,
+  "description": "Zero-bloat, attribute-driven animation library. CSS-first with optional GSAP power.",
+  "keywords": [
+    "animation",
+    "css",
+    "gsap",
+    "scroll",
+    "intersection-observer",
+    "data-attributes",
+    "reveal",
+    "transitions",
+    "lightweight"
+  ],
+  "license": "MIT",
+  "author": "FlowG Contributors",
+  "homepage": "https://github.com/nicepkg/flowg#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicepkg/flowg.git",
+    "directory": "packages/flowg"
+  },
+  "bugs": {
+    "url": "https://github.com/nicepkg/flowg/issues"
+  },
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "exports": {
     "./core": {
-      "import": "./dist/flowg-core.js",
-      "types": "./dist/flowg-core.d.ts"
+      "types": "./dist/index.core.d.ts",
+      "import": "./dist/flowg-core.js"
     },
     "./pro": {
-      "import": "./dist/flowg-pro.js",
-      "types": "./dist/flowg-pro.d.ts"
+      "types": "./dist/index.pro.d.ts",
+      "import": "./dist/flowg-pro.js"
     },
     "./style.css": "./dist/style.css"
   },
   "main": "./dist/flowg-core.js",
   "module": "./dist/flowg-core.js",
-  "types": "./dist/flowg-core.d.ts",
+  "types": "./dist/index.core.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build && tsc --emitDeclarationOnly",
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "sass": "^1.83.0",
+    "terser": "^5.46.0",
     "typescript": "5.9.2",
     "vite": "^6.3.0",
     "vite-plugin-dts": "^4.5.0"
-  },
-  "dependencies": {
-    "gsap": "^3.12.7"
   },
   "peerDependencies": {
     "gsap": "^3.12.0"
@@ -43,5 +71,9 @@
     "gsap": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

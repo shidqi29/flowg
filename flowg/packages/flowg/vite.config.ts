@@ -27,9 +27,13 @@ export default defineConfig({
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
+      external: ["gsap"],
       output: {
         assetFileNames: "style.[ext]",
         chunkFileNames: "[name].js",
+        globals: {
+          gsap: "gsap",
+        },
       },
     },
     cssCodeSplit: false,
