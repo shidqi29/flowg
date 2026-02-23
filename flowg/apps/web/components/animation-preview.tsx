@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { AnimationDef } from "@/lib/animations";
 
 interface AnimationPreviewProps {
@@ -17,20 +17,31 @@ export function AnimationPreview({
   ease = "ease-out",
 }: AnimationPreviewProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(false);
 
   const play = useCallback(() => {
-    setActive(false);
-    // Force reflow, then activate
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setActive(true);
-      });
-    });
+    const el = ref.current;
+    if (!el) return;
+
+    // Remove active class and clear animation
+    el.classList.remove("flowg-active");
+    el.style.animation = "none";
+
+    // Force reflow so the browser resets the element
+    void el.offsetHeight;
+
+    // Clear inline animation override and add active class
+    el.style.animation = "";
+    el.classList.add("flowg-active");
   }, []);
 
-  // Auto-play on mount
+  // Auto-play on mount and whenever props change
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    el.classList.remove("flowg-active");
+    el.style.animation = "none";
+
     const timer = setTimeout(play, 100);
     return () => clearTimeout(timer);
   }, [animation.name, duration, delay, ease, play]);
@@ -43,7 +54,7 @@ export function AnimationPreview({
       <div
         ref={ref}
         data-anim={animation.name}
-        className={`flowg-preview ${active ? "flowg-active" : ""}`}
+        className="flowg-preview"
         style={
           {
             "--fg-dur": durSec,

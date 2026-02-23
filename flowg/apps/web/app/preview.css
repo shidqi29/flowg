@@ -1,119 +1,304 @@
 /* ==========================================================
    FlowG Showcase — Preview Animation Styles
-   These replicate the FlowG CSS animations for the live preview
-   within the React app, without needing the actual library runtime.
+   All animations use @keyframes for reliable playback in React.
+   The .flowg-active class triggers the animation.
    ========================================================== */
 
-/* Base state: hidden */
+/* Base state: hidden until activated */
 .flowg-preview {
   opacity: 0;
-  will-change: opacity, transform, filter;
-  transition-property: opacity, transform, filter;
-  transition-duration: var(--fg-dur, 0.5s);
-  transition-delay: var(--fg-del, 0s);
-  transition-timing-function: var(--fg-ease, ease-out);
 }
 
-.flowg-preview.flowg-active {
-  opacity: 1;
-  transform: none !important;
-  filter: none !important;
+/* When active: run the keyframe animation for the matching data-anim */
+
+/* ---- Fade ---- */
+
+.flowg-preview[data-anim="fade-in"].flowg-active {
+  animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Fade */
-.flowg-preview[data-anim="fade-in"] {
-  opacity: 0;
+.flowg-preview[data-anim="fade-up"].flowg-active {
+  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }
-.flowg-preview[data-anim="fade-up"] {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.flowg-preview[data-anim="fade-down"] {
-  opacity: 0;
-  transform: translateY(-30px);
-}
-.flowg-preview[data-anim="fade-left"] {
-  opacity: 0;
-  transform: translateX(30px);
-}
-.flowg-preview[data-anim="fade-right"] {
-  opacity: 0;
-  transform: translateX(-30px);
+@keyframes fg-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Zoom */
-.flowg-preview[data-anim="zoom-in"] {
-  opacity: 0;
-  transform: scale(0.9);
+.flowg-preview[data-anim="fade-down"].flowg-active {
+  animation: fg-fade-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }
-.flowg-preview[data-anim="zoom-out"] {
-  opacity: 0;
-  transform: scale(1.1);
-}
-
-/* Slide */
-.flowg-preview[data-anim="slide-up"] {
-  opacity: 0;
-  transform: translateY(60px);
-}
-.flowg-preview[data-anim="slide-down"] {
-  opacity: 0;
-  transform: translateY(-60px);
-}
-.flowg-preview[data-anim="slide-left"] {
-  opacity: 0;
-  transform: translateX(60px);
-}
-.flowg-preview[data-anim="slide-right"] {
-  opacity: 0;
-  transform: translateX(-60px);
+@keyframes fg-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Flip */
-.flowg-preview[data-anim="flip-up"] {
-  opacity: 0;
-  transform: perspective(600px) rotateX(15deg);
+.flowg-preview[data-anim="fade-left"].flowg-active {
+  animation: fg-fade-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }
-.flowg-preview[data-anim="flip-down"] {
-  opacity: 0;
-  transform: perspective(600px) rotateX(-15deg);
-}
-.flowg-preview[data-anim="flip-left"] {
-  opacity: 0;
-  transform: perspective(600px) rotateY(15deg);
-}
-.flowg-preview[data-anim="flip-right"] {
-  opacity: 0;
-  transform: perspective(600px) rotateY(-15deg);
+@keyframes fg-fade-left {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* Blur */
-.flowg-preview[data-anim="blur-in"] {
-  opacity: 0;
-  filter: blur(10px);
+.flowg-preview[data-anim="fade-right"].flowg-active {
+  animation: fg-fade-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }
-.flowg-preview[data-anim="blur-up"] {
-  opacity: 0;
-  filter: blur(10px);
-  transform: translateY(20px);
-}
-
-/* Rotate */
-.flowg-preview[data-anim="rotate-in"] {
-  opacity: 0;
-  transform: rotate(15deg);
+@keyframes fg-fade-right {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* Bounce */
-.flowg-preview[data-anim="bounce-in"] {
-  opacity: 0;
-  transform: scale(0.3);
+/* ---- Zoom ---- */
+
+.flowg-preview[data-anim="zoom-in"].flowg-active {
+  animation: fg-zoom-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }
+@keyframes fg-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.flowg-preview[data-anim="zoom-out"].flowg-active {
+  animation: fg-zoom-out var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-zoom-out {
+  from {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- Slide ---- */
+
+.flowg-preview[data-anim="slide-up"].flowg-active {
+  animation: fg-slide-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flowg-preview[data-anim="slide-down"].flowg-active {
+  animation: fg-slide-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flowg-preview[data-anim="slide-left"].flowg-active {
+  animation: fg-slide-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.flowg-preview[data-anim="slide-right"].flowg-active {
+  animation: fg-slide-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---- Flip ---- */
+
+.flowg-preview[data-anim="flip-up"].flowg-active {
+  animation: fg-flip-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-flip-up {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(15deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0);
+  }
+}
+
+.flowg-preview[data-anim="flip-down"].flowg-active {
+  animation: fg-flip-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-flip-down {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0);
+  }
+}
+
+.flowg-preview[data-anim="flip-left"].flowg-active {
+  animation: fg-flip-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-flip-left {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(15deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0);
+  }
+}
+
+.flowg-preview[data-anim="flip-right"].flowg-active {
+  animation: fg-flip-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-flip-right {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0);
+  }
+}
+
+/* ---- Blur ---- */
+
+.flowg-preview[data-anim="blur-in"].flowg-active {
+  animation: fg-blur-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.flowg-preview[data-anim="blur-up"].flowg-active {
+  animation: fg-blur-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-blur-up {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+/* ---- Rotate ---- */
+
+.flowg-preview[data-anim="rotate-in"].flowg-active {
+  animation: fg-rotate-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+@keyframes fg-rotate-in {
+  from {
+    opacity: 0;
+    transform: rotate(15deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0);
+  }
+}
+
+/* ---- Bounce ---- */
+
 .flowg-preview[data-anim="bounce-in"].flowg-active {
-  animation: flowg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+  animation: fg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
 }
-
-@keyframes flowg-bounce-in {
+@keyframes fg-bounce-in {
   0% {
     opacity: 0;
     transform: scale(0.3);
@@ -131,15 +316,43 @@
   }
 }
 
-/* GSAP animations — simplified preview (no actual GSAP in showcase) */
-.flowg-preview[data-anim="split-text"],
-.flowg-preview[data-anim="text-stagger"],
-.flowg-preview[data-anim="typewriter"],
-.flowg-preview[data-anim="scroll-scrub"],
-.flowg-preview[data-anim="physics-bounce"],
-.flowg-preview[data-anim="stagger-up"],
-.flowg-preview[data-anim="stagger-fade"],
-.flowg-preview[data-anim="counter"] {
-  opacity: 0;
-  transform: translateY(30px);
+/* ---- GSAP animations — simplified preview (no actual GSAP in showcase) ---- */
+
+.flowg-preview[data-anim="split-text"].flowg-active {
+  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="text-stagger"].flowg-active {
+  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="typewriter"].flowg-active {
+  animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="scroll-scrub"].flowg-active {
+  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="physics-bounce"].flowg-active {
+  animation: fg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+}
+
+.flowg-preview[data-anim="stagger-up"].flowg-active {
+  animation: fg-slide-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="stagger-fade"].flowg-active {
+  animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
+}
+
+.flowg-preview[data-anim="counter"].flowg-active {
+  animation: fg-zoom-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
+    var(--fg-ease, ease-out) both;
 }

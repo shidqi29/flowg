@@ -67,18 +67,55 @@ export const GSAP_ANIMATIONS = ANIMATION_REGISTRY.filter((a) => a.engine === "gs
 
 /**
  * Generate the correct <script> tag based on animation type.
+ * Provides both standard and Webflow-ready variants.
  */
-export function generateScriptTag(animationType: string): string {
+export function generateScriptTag(
+  animationType: string,
+  platform: "standard" | "webflow" = "standard",
+): string {
   const anim = ANIMATION_REGISTRY.find((a) => a.name === animationType);
   if (!anim) return "";
 
+  if (platform === "webflow") {
+    if (anim.engine === "gsap") {
+      return `<!-- 1. Add FlowG stylesheet (paste in Project Settings → Custom Code → Head) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+
+<!-- 2. Add GSAP + FlowG Pro (paste in Project Settings → Custom Code → Footer) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script type="module">
+  import { initPro } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js";
+  initPro();
+</script>`;
+    }
+
+    return `<!-- 1. Add FlowG stylesheet (paste in Project Settings → Custom Code → Head) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+
+<!-- 2. Add FlowG Core (paste in Project Settings → Custom Code → Footer) -->
+<script type="module">
+  import { initCore } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js";
+  initCore();
+</script>`;
+  }
+
+  // Standard (npm / CDN)
   if (anim.engine === "gsap") {
-    return `<!-- FlowG Pro Engine (includes GSAP) -->
-<script src="https://cdn.jsdelivr.net/npm/flowgeneration/dist/flowg-pro.iife.js"></script>`;
+    return `<!-- FlowG Pro Engine (requires GSAP) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script type="module">
+  import { initPro } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js";
+  initPro();
+</script>`;
   }
 
   return `<!-- FlowG Core Engine (~2KB gzipped) -->
-<script src="https://cdn.jsdelivr.net/npm/flowgeneration/dist/flowg-core.iife.js"></script>`;
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+<script type="module">
+  import { initCore } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js";
+  initCore();
+</script>`;
 }
 
 /**

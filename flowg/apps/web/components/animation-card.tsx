@@ -18,13 +18,13 @@ export function AnimationCard({
 }: AnimationCardProps) {
   return (
     <Card
-      className={`cursor-pointer transition-all hover:shadow-md active:scale-[0.98] ${
+      className={`cursor-pointer transition-all hover:shadow-md active:scale-[0.98] py-0 gap-0 ${
         isSelected
           ? "ring-2 ring-primary shadow-md"
           : "hover:ring-1 hover:ring-border"
       }`}
       onClick={() => onSelect?.(animation)}>
-      <CardHeader className="p-3 sm:p-4 pb-2">
+      <CardHeader className="p-3 sm:p-4 pb-2 px-3 sm:px-4">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-xs sm:text-sm font-medium truncate">
             {animation.label}
@@ -40,7 +40,7 @@ export function AnimationCard({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-3 sm:p-4 pt-0">
+      <CardContent className="p-3 sm:p-4 pt-0 px-3 sm:px-4">
         <AnimationPreview animation={animation} />
       </CardContent>
     </Card>

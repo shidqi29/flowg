@@ -118,6 +118,69 @@ activate(document.querySelector("#my-el"));
 reset(document.querySelector("#my-el"));
 ```
 
+## Webflow Integration
+
+FlowG works with Webflow — no npm required. Add the scripts via **Project Settings → Custom Code**.
+
+### Step 1: Add Stylesheet (Head Code)
+
+Paste this in **Project Settings → Custom Code → Head Code**:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+```
+
+### Step 2: Add Script (Footer Code)
+
+**For CSS animations only (Core):**
+
+Paste this in **Project Settings → Custom Code → Footer Code**:
+
+```html
+<script type="module">
+  import { initCore } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js";
+  initCore();
+</script>
+```
+
+**For GSAP-powered animations (Pro):**
+
+You must add the GSAP library **before** FlowG Pro. Paste this in **Footer Code**:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script type="module">
+  import { initPro } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js";
+  initPro();
+</script>
+```
+
+> ⚠️ GSAP must load **before** FlowG Pro. Keep the order above.
+
+### Step 3: Add Attributes to Elements
+
+In the Webflow Designer:
+
+1. Select any element
+2. Go to **Element Settings** (⚙️ icon)
+3. Under **Custom Attributes**, add:
+
+| Name                  | Value                             |
+| --------------------- | --------------------------------- |
+| `data-flowg-anim`     | `fade-up` (or any animation name) |
+| `data-flowg-duration` | `0.6` (optional)                  |
+| `data-flowg-delay`    | `0.2` (optional)                  |
+| `data-flowg-ease`     | `ease-out` (optional)             |
+
+### Webflow Tips
+
+- **One-time setup:** Steps 1 & 2 only need to be done once per project
+- **Per-element:** Step 3 is done on each element you want to animate
+- **Preview:** Use Webflow's preview mode or publish to see animations
+- **CMS items:** Attributes work on CMS-powered elements too
+
 ## TypeScript
 
 Full type declarations are included. All exports are fully typed.
