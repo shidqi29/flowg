@@ -1,0 +1,27 @@
+// ==========================================================
+// FlowG Base Styles
+// Applied to ALL elements with [data-flowg-anim]
+// ==========================================================
+
+[data-flowg-anim] {
+  // Hide elements before they animate in
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--fg-dur, 0.5s);
+  transition-delay: var(--fg-del, 0s);
+  transition-timing-function: var(--fg-ease, ease-out);
+}
+
+// Elements handled by GSAP should not use CSS transitions
+[data-flowg-anim].flowg-js-handled {
+  transition: none;
+  will-change: auto;
+}
+
+// Active state — CSS engine toggles this class
+[data-flowg-anim].flowg-active {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}

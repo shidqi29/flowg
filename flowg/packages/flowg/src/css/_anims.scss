@@ -1,0 +1,144 @@
+// ==========================================================
+// FlowG CSS Animation Presets
+// Each animation sets a "from" state on the element.
+// When `.flowg-active` is added, the element transitions
+// to its natural state (opacity:1, transform:none, filter:none).
+// ==========================================================
+
+// --- Fade Variants ---
+
+[data-flowg-anim="fade-in"] {
+  opacity: 0;
+}
+
+[data-flowg-anim="fade-up"] {
+  opacity: 0;
+  transform: translateY(var(--fg-distance, 30px));
+}
+
+[data-flowg-anim="fade-down"] {
+  opacity: 0;
+  transform: translateY(calc(var(--fg-distance, 30px) * -1));
+}
+
+[data-flowg-anim="fade-left"] {
+  opacity: 0;
+  transform: translateX(var(--fg-distance, 30px));
+}
+
+[data-flowg-anim="fade-right"] {
+  opacity: 0;
+  transform: translateX(calc(var(--fg-distance, 30px) * -1));
+}
+
+// --- Zoom Variants ---
+
+[data-flowg-anim="zoom-in"] {
+  opacity: 0;
+  transform: scale(var(--fg-scale-from, 0.9));
+}
+
+[data-flowg-anim="zoom-out"] {
+  opacity: 0;
+  transform: scale(var(--fg-scale-from, 1.1));
+}
+
+// --- Slide Variants (no opacity change) ---
+
+[data-flowg-anim="slide-up"] {
+  opacity: 0;
+  transform: translateY(var(--fg-distance, 60px));
+}
+
+[data-flowg-anim="slide-down"] {
+  opacity: 0;
+  transform: translateY(calc(var(--fg-distance, 60px) * -1));
+}
+
+[data-flowg-anim="slide-left"] {
+  opacity: 0;
+  transform: translateX(var(--fg-distance, 60px));
+}
+
+[data-flowg-anim="slide-right"] {
+  opacity: 0;
+  transform: translateX(calc(var(--fg-distance, 60px) * -1));
+}
+
+// --- Flip Variants ---
+
+[data-flowg-anim="flip-up"] {
+  opacity: 0;
+  transform: perspective(600px) rotateX(var(--fg-rotate, 15deg));
+}
+
+[data-flowg-anim="flip-down"] {
+  opacity: 0;
+  transform: perspective(600px) rotateX(calc(var(--fg-rotate, 15deg) * -1));
+}
+
+[data-flowg-anim="flip-left"] {
+  opacity: 0;
+  transform: perspective(600px) rotateY(var(--fg-rotate, 15deg));
+}
+
+[data-flowg-anim="flip-right"] {
+  opacity: 0;
+  transform: perspective(600px) rotateY(calc(var(--fg-rotate, 15deg) * -1));
+}
+
+// --- Blur ---
+
+[data-flowg-anim="blur-in"] {
+  opacity: 0;
+  filter: blur(var(--fg-blur, 10px));
+}
+
+[data-flowg-anim="blur-up"] {
+  opacity: 0;
+  filter: blur(var(--fg-blur, 10px));
+  transform: translateY(var(--fg-distance, 20px));
+}
+
+// --- Rotate ---
+
+[data-flowg-anim="rotate-in"] {
+  opacity: 0;
+  transform: rotate(var(--fg-rotate, 15deg));
+}
+
+// --- Bounce ---
+
+[data-flowg-anim="bounce-in"] {
+  opacity: 0;
+  transform: scale(0.3);
+  // Uses a special keyframe animation instead of transition
+  &.flowg-active {
+    animation: flowg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ==========================================================
+// Keyframe Animations (for animations that can't be done
+// with simple transitions)
+// ==========================================================
+
+@keyframes flowg-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

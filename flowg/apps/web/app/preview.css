@@ -1,0 +1,145 @@
+/* ==========================================================
+   FlowG Showcase — Preview Animation Styles
+   These replicate the FlowG CSS animations for the live preview
+   within the React app, without needing the actual library runtime.
+   ========================================================== */
+
+/* Base state: hidden */
+.flowg-preview {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--fg-dur, 0.5s);
+  transition-delay: var(--fg-del, 0s);
+  transition-timing-function: var(--fg-ease, ease-out);
+}
+
+.flowg-preview.flowg-active {
+  opacity: 1;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Fade */
+.flowg-preview[data-anim="fade-in"] {
+  opacity: 0;
+}
+.flowg-preview[data-anim="fade-up"] {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.flowg-preview[data-anim="fade-down"] {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+.flowg-preview[data-anim="fade-left"] {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.flowg-preview[data-anim="fade-right"] {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Zoom */
+.flowg-preview[data-anim="zoom-in"] {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.flowg-preview[data-anim="zoom-out"] {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+/* Slide */
+.flowg-preview[data-anim="slide-up"] {
+  opacity: 0;
+  transform: translateY(60px);
+}
+.flowg-preview[data-anim="slide-down"] {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+.flowg-preview[data-anim="slide-left"] {
+  opacity: 0;
+  transform: translateX(60px);
+}
+.flowg-preview[data-anim="slide-right"] {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+/* Flip */
+.flowg-preview[data-anim="flip-up"] {
+  opacity: 0;
+  transform: perspective(600px) rotateX(15deg);
+}
+.flowg-preview[data-anim="flip-down"] {
+  opacity: 0;
+  transform: perspective(600px) rotateX(-15deg);
+}
+.flowg-preview[data-anim="flip-left"] {
+  opacity: 0;
+  transform: perspective(600px) rotateY(15deg);
+}
+.flowg-preview[data-anim="flip-right"] {
+  opacity: 0;
+  transform: perspective(600px) rotateY(-15deg);
+}
+
+/* Blur */
+.flowg-preview[data-anim="blur-in"] {
+  opacity: 0;
+  filter: blur(10px);
+}
+.flowg-preview[data-anim="blur-up"] {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(20px);
+}
+
+/* Rotate */
+.flowg-preview[data-anim="rotate-in"] {
+  opacity: 0;
+  transform: rotate(15deg);
+}
+
+/* Bounce */
+.flowg-preview[data-anim="bounce-in"] {
+  opacity: 0;
+  transform: scale(0.3);
+}
+.flowg-preview[data-anim="bounce-in"].flowg-active {
+  animation: flowg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+}
+
+@keyframes flowg-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* GSAP animations — simplified preview (no actual GSAP in showcase) */
+.flowg-preview[data-anim="split-text"],
+.flowg-preview[data-anim="text-stagger"],
+.flowg-preview[data-anim="typewriter"],
+.flowg-preview[data-anim="scroll-scrub"],
+.flowg-preview[data-anim="physics-bounce"],
+.flowg-preview[data-anim="stagger-up"],
+.flowg-preview[data-anim="stagger-fade"],
+.flowg-preview[data-anim="counter"] {
+  opacity: 0;
+  transform: translateY(30px);
+}
