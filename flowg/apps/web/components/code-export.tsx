@@ -24,6 +24,9 @@ export function CodeExport({ animation, config }: CodeExportProps) {
     ease: config.ease,
     offset: config.offset,
     trigger: config.trigger,
+    stagger: config.stagger,
+    repeat: config.repeat,
+    direction: config.direction,
   });
 
   const fullSnippet = `${scriptTag}\n\n${htmlSnippet}`;

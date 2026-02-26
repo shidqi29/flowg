@@ -316,43 +316,79 @@
   }
 }
 
-/* ---- GSAP animations — simplified preview (no actual GSAP in showcase) ---- */
-
-.flowg-preview[data-anim="split-text"].flowg-active {
-  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
-}
-
-.flowg-preview[data-anim="text-stagger"].flowg-active {
-  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
-}
-
-.flowg-preview[data-anim="typewriter"].flowg-active {
-  animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
-}
-
-.flowg-preview[data-anim="scroll-scrub"].flowg-active {
-  animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
-}
+/* ---- GSAP animations — proper JS-driven previews replace these ---- */
+/* physics-bounce still uses CSS keyframe since it's a visual effect */
 
 .flowg-preview[data-anim="physics-bounce"].flowg-active {
-  animation: fg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+  animation: fg-physics-bounce var(--fg-dur, 0.8s) var(--fg-del, 0s) both;
+}
+@keyframes fg-physics-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  70% {
+    transform: translateY(-12px);
+  }
+  85% {
+    transform: translateY(0);
+  }
+  92% {
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.flowg-preview[data-anim="stagger-up"].flowg-active {
-  animation: fg-slide-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+/* ---- Stagger child keyframes (used by JS previews) ---- */
+
+@keyframes fg-stagger-char {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.8);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
-.flowg-preview[data-anim="stagger-fade"].flowg-active {
-  animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+@keyframes fg-stagger-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.flowg-preview[data-anim="counter"].flowg-active {
-  animation: fg-zoom-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+/* ---- Typewriter cursor blink ---- */
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.animate-blink {
+  animation: blink 0.8s step-end infinite;
 }

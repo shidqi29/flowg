@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { supportsStagger, supportsRepeat } from "@/lib/animations";
 
 export interface AnimConfig {
   duration: string;
@@ -18,11 +19,16 @@ export interface AnimConfig {
   ease: string;
   offset: string;
   trigger: string;
+  stagger: string;
+  repeat: string;
+  direction: string;
 }
 
 interface ConfiguratorProps {
   config: AnimConfig;
   onChange: (config: AnimConfig) => void;
+  /** Currently selected animation name — controls which fields are shown */
+  animationName?: string;
 }
 
 const EASING_OPTIONS = [
@@ -35,6 +41,7 @@ const EASING_OPTIONS = [
   { value: "power3.out", label: "Power3 Out (GSAP)" },
   { value: "bounce.out", label: "Bounce Out (GSAP)" },
   { value: "elastic.out(1,0.3)", label: "Elastic (GSAP)" },
+  { value: "back.out(1.7)", label: "Back Out (GSAP)" },
 ];
 
 const TRIGGER_OPTIONS = [
@@ -43,10 +50,23 @@ const TRIGGER_OPTIONS = [
   { value: "click", label: "Click" },
 ];
 
-export function Configurator({ config, onChange }: ConfiguratorProps) {
+const DIRECTION_OPTIONS = [
+  { value: "normal", label: "Normal" },
+  { value: "reverse", label: "Reverse" },
+  { value: "alternate", label: "Alternate" },
+];
+
+export function Configurator({
+  config,
+  onChange,
+  animationName = "",
+}: ConfiguratorProps) {
   const update = (key: keyof AnimConfig, value: string) => {
     onChange({ ...config, [key]: value });
   };
+
+  const showStagger = supportsStagger(animationName);
+  const showRepeat = supportsRepeat(animationName);
 
   return (
     <div className="space-y-5">
@@ -92,6 +112,31 @@ export function Configurator({ config, onChange }: ConfiguratorProps) {
         />
       </div>
 
+      {/* Stagger (conditional) */}
+      {showStagger && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="stagger" className="text-xs">
+              Stagger
+            </Label>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {config.stagger}s
+            </span>
+          </div>
+          <Slider
+            id="stagger"
+            min={0.02}
+            max={0.5}
+            step={0.02}
+            value={[parseFloat(config.stagger)]}
+            onValueChange={([v]) => update("stagger", v!.toFixed(2))}
+          />
+          <p className="text-[10px] text-muted-foreground">
+            Delay between each child element&apos;s animation
+          </p>
+        </div>
+      )}
+
       <Separator />
 
       {/* Easing */}
@@ -129,6 +174,57 @@ export function Configurator({ config, onChange }: ConfiguratorProps) {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Repeat + Direction (conditional) */}
+      {showRepeat && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="repeat" className="text-xs">
+                Repeat
+              </Label>
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {config.repeat === "-1" ? "∞" : config.repeat}
+              </span>
+            </div>
+            <Slider
+              id="repeat"
+              min={0}
+              max={10}
+              step={1}
+              value={[parseInt(config.repeat)]}
+              onValueChange={([v]) => update("repeat", v!.toString())}
+            />
+            <p className="text-[10px] text-muted-foreground">
+              0 = play once · Set to -1 for infinite
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-xs">Direction</Label>
+            <Select
+              value={config.direction}
+              onValueChange={(v) => update("direction", v)}>
+              <SelectTrigger className="text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DIRECTION_OPTIONS.map((opt) => (
+                  <SelectItem
+                    key={opt.value}
+                    value={opt.value}
+                    className="text-xs">
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </>
+      )}
+
+      <Separator />
 
       {/* Offset */}
       <div className="space-y-2">

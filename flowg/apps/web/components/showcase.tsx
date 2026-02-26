@@ -30,6 +30,9 @@ const DEFAULT_CONFIG: AnimConfig = {
   ease: "ease-out",
   offset: "",
   trigger: "viewport",
+  stagger: "0.08",
+  repeat: "0",
+  direction: "normal",
 };
 
 function SidebarContent({
@@ -66,12 +69,17 @@ function SidebarContent({
         duration={config.duration}
         delay={config.delay}
         ease={config.ease}
+        stagger={config.stagger}
       />
 
       <Separator />
 
       {/* Configurator */}
-      <Configurator config={config} onChange={setConfig} />
+      <Configurator
+        config={config}
+        onChange={setConfig}
+        animationName={selected.name}
+      />
 
       <Separator />
 
