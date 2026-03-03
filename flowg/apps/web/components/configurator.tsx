@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { supportsStagger, supportsRepeat } from "@/lib/animations";
 
 export interface AnimConfig {
   duration: string;
@@ -27,8 +26,6 @@ export interface AnimConfig {
 interface ConfiguratorProps {
   config: AnimConfig;
   onChange: (config: AnimConfig) => void;
-  /** Currently selected animation name — controls which fields are shown */
-  animationName?: string;
 }
 
 const EASING_OPTIONS = [
@@ -56,17 +53,14 @@ const DIRECTION_OPTIONS = [
   { value: "alternate", label: "Alternate" },
 ];
 
-export function Configurator({
-  config,
-  onChange,
-  animationName = "",
-}: ConfiguratorProps) {
+export function Configurator({ config, onChange }: ConfiguratorProps) {
   const update = (key: keyof AnimConfig, value: string) => {
     onChange({ ...config, [key]: value });
   };
 
-  const showStagger = supportsStagger(animationName);
-  const showRepeat = supportsRepeat(animationName);
+  const isGsapEase = /^(power|bounce|elastic|back|expo|circ|sine)\d?\./i.test(
+    config.ease,
+  );
 
   return (
     <div className="space-y-5">
@@ -112,30 +106,28 @@ export function Configurator({
         />
       </div>
 
-      {/* Stagger (conditional) */}
-      {showStagger && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="stagger" className="text-xs">
-              Stagger
-            </Label>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {config.stagger}s
-            </span>
-          </div>
-          <Slider
-            id="stagger"
-            min={0.02}
-            max={0.5}
-            step={0.02}
-            value={[parseFloat(config.stagger)]}
-            onValueChange={([v]) => update("stagger", v!.toFixed(2))}
-          />
-          <p className="text-[10px] text-muted-foreground">
-            Delay between each child element&apos;s animation
-          </p>
+      {/* Stagger */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="stagger" className="text-xs">
+            Stagger
+          </Label>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {config.stagger}s
+          </span>
         </div>
-      )}
+        <Slider
+          id="stagger"
+          min={0}
+          max={0.5}
+          step={0.02}
+          value={[parseFloat(config.stagger)]}
+          onValueChange={([v]) => update("stagger", v!.toFixed(2))}
+        />
+        <p className="text-[10px] text-muted-foreground">
+          Delay between each child element&apos;s animation
+        </p>
+      </div>
 
       <Separator />
 
@@ -154,6 +146,12 @@ export function Configurator({
             ))}
           </SelectContent>
         </Select>
+        {isGsapEase && (
+          <p className="text-[10px] text-amber-600 dark:text-amber-400">
+            ⚠ GSAP easings require the Pro engine. Preview uses a CSS
+            approximation.
+          </p>
+        )}
       </div>
 
       {/* Trigger */}
@@ -175,57 +173,6 @@ export function Configurator({
         </Select>
       </div>
 
-      {/* Repeat + Direction (conditional) */}
-      {showRepeat && (
-        <>
-          <Separator />
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="repeat" className="text-xs">
-                Repeat
-              </Label>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {config.repeat === "-1" ? "∞" : config.repeat}
-              </span>
-            </div>
-            <Slider
-              id="repeat"
-              min={0}
-              max={10}
-              step={1}
-              value={[parseInt(config.repeat)]}
-              onValueChange={([v]) => update("repeat", v!.toString())}
-            />
-            <p className="text-[10px] text-muted-foreground">
-              0 = play once · Set to -1 for infinite
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-xs">Direction</Label>
-            <Select
-              value={config.direction}
-              onValueChange={(v) => update("direction", v)}>
-              <SelectTrigger className="text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DIRECTION_OPTIONS.map((opt) => (
-                  <SelectItem
-                    key={opt.value}
-                    value={opt.value}
-                    className="text-xs">
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </>
-      )}
-
-      <Separator />
-
       {/* Offset */}
       <div className="space-y-2">
         <Label htmlFor="offset" className="text-xs">
@@ -238,6 +185,50 @@ export function Configurator({
           placeholder="e.g. 20%"
           className="text-xs"
         />
+      </div>
+
+      <Separator />
+
+      {/* Repeat */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="repeat" className="text-xs">
+            Repeat
+          </Label>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {config.repeat === "-1" ? "∞" : config.repeat}
+          </span>
+        </div>
+        <Slider
+          id="repeat"
+          min={0}
+          max={10}
+          step={1}
+          value={[parseInt(config.repeat)]}
+          onValueChange={([v]) => update("repeat", v!.toString())}
+        />
+        <p className="text-[10px] text-muted-foreground">
+          0 = play once · Set to -1 for infinite
+        </p>
+      </div>
+
+      {/* Direction */}
+      <div className="space-y-2">
+        <Label className="text-xs">Direction</Label>
+        <Select
+          value={config.direction}
+          onValueChange={(v) => update("direction", v)}>
+          <SelectTrigger className="text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {DIRECTION_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

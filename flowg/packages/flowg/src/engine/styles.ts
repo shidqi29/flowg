@@ -5,6 +5,14 @@
 // ==========================================================
 
 /**
+ * Detect GSAP-style easing strings (e.g. "power2.out", "bounce.out").
+ * These are NOT valid CSS timing functions and would break transitions.
+ */
+function isGsapEasing(value: string): boolean {
+  return /^(power|bounce|elastic|back|expo|circ|sine)\d?\./i.test(value);
+}
+
+/**
  * Apply CSS custom properties from data attributes onto the element.
  * This bridges the data-flowg-* API to CSS variables used in transitions.
  */
@@ -25,6 +33,11 @@ export function injectCssVars(el: HTMLElement): void {
   }
 
   if (ease) {
-    el.style.setProperty("--fg-ease", ease);
+    // GSAP easing strings are invalid CSS — skip setting so the
+    // CSS fallback (ease-out) is used. The GSAP Pro engine handles
+    // these natively via gsap.to().
+    if (!isGsapEasing(ease)) {
+      el.style.setProperty("--fg-ease", ease);
+    }
   }
 }

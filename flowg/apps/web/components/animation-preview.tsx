@@ -11,6 +11,27 @@ interface AnimationPreviewProps {
   stagger?: string;
 }
 
+// ---- GSAP → CSS easing fallback ----
+// GSAP easing strings are not valid CSS timing functions.
+// Map them to approximate CSS cubic-bezier equivalents for preview.
+const GSAP_EASING_MAP: Record<string, string> = {
+  "power2.out": "cubic-bezier(0.33, 1, 0.68, 1)",
+  "power3.out": "cubic-bezier(0.22, 1, 0.36, 1)",
+  "bounce.out": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+  "elastic.out(1,0.3)": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+  "back.out(1.7)": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+};
+
+function isGsapEasing(ease: string): boolean {
+  return /^(power|bounce|elastic|back|expo|circ|sine)\d?\./i.test(ease);
+}
+
+/** Convert an easing value to a valid CSS timing function */
+function toCssEasing(ease: string): string {
+  if (!isGsapEasing(ease)) return ease; // already valid CSS
+  return GSAP_EASING_MAP[ease] ?? "cubic-bezier(0.33, 1, 0.68, 1)"; // default to power2.out-like
+}
+
 // ---- Typewriter Preview ----
 function TypewriterPreview({
   duration,
@@ -56,7 +77,7 @@ function TypewriterPreview({
       onReplay={play}
       label="Typewriter"
       sublabel="Typing effect one char at a time">
-      <div className="font-mono text-sm sm:text-lg font-semibold text-foreground min-h-[1.5em] flex items-center justify-center">
+      <div className="font-mono text-base sm:text-2xl font-semibold text-foreground min-h-[1.5em] flex items-center justify-center">
         <span>{text}</span>
         <span
           className={`inline-block w-0.5 h-[1.2em] bg-foreground ml-0.5 ${
@@ -114,10 +135,10 @@ function CounterPreview({
       label="Counter"
       sublabel="Animated number counter">
       <div className="text-center">
-        <p className="text-2xl sm:text-4xl font-bold tabular-nums text-foreground">
+        <p className="text-3xl sm:text-5xl font-bold tabular-nums text-foreground">
           {value.toLocaleString()}
         </p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1.5">
           active users
         </p>
       </div>
@@ -159,7 +180,7 @@ function StaggerPreview({
     const delayMs = parseFloat(delay) * 1000;
     const staggerMs = (parseFloat(stagger) || 0.08) * 1000;
     const durSec = duration;
-    const easeVal = ease;
+    const easeVal = toCssEasing(ease);
 
     // Reset all children
     children.forEach((child) => {
@@ -189,7 +210,12 @@ function StaggerPreview({
     <PreviewWrapper
       onReplay={play}
       label={animation.label}
-      sublabel={animation.description}>
+      sublabel={animation.description}
+      notice={
+        isGsapEasing(ease)
+          ? "GSAP easing approximated with CSS cubic-bezier for preview"
+          : undefined
+      }>
       <div
         ref={containerRef}
         className={`flex items-center justify-center ${
@@ -200,10 +226,10 @@ function StaggerPreview({
             key={i}
             className={`stagger-child opacity-0 ${
               isTextType
-                ? "text-xl sm:text-2xl font-bold font-mono text-foreground"
+                ? "text-xl sm:text-3xl font-bold font-mono text-foreground"
                 : isWordType
-                  ? "text-sm sm:text-base font-semibold text-foreground"
-                  : "px-3 py-1.5 sm:px-4 sm:py-2 rounded-md bg-primary/10 text-primary text-xs sm:text-sm font-medium"
+                  ? "text-base sm:text-lg font-semibold text-foreground"
+                  : "px-4 py-2 sm:px-5 sm:py-3 rounded-md bg-primary/10 text-primary text-sm sm:text-base font-medium"
             }`}>
             {item}
           </span>
@@ -246,27 +272,27 @@ function ScrubPreview({ duration }: { duration: string }) {
       onReplay={play}
       label="Scroll Scrub"
       sublabel="Animation tied to scroll position">
-      <div className="w-full max-w-50 mx-auto space-y-3">
+      <div className="w-full max-w-64 mx-auto space-y-4">
         {/* Progress bar */}
-        <div className="h-2 rounded-full bg-muted overflow-hidden">
+        <div className="h-2.5 rounded-full bg-muted overflow-hidden">
           <div
             className="h-full rounded-full bg-primary transition-none"
             style={{ width: `${progress * 100}%` }}
           />
         </div>
         {/* Moving element */}
-        <div className="relative h-8">
+        <div className="relative h-10">
           <div
-            className="absolute top-0 size-8 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center"
+            className="absolute top-0 size-10 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center"
             style={{
               left: `${progress * 100}%`,
               transform: `translateX(-50%) rotate(${progress * 360}deg)`,
               transition: "none",
             }}>
-            <span className="text-[10px] font-bold text-primary">↓</span>
+            <span className="text-xs font-bold text-primary">↓</span>
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground text-center tabular-nums">
+        <p className="text-xs text-muted-foreground text-center tabular-nums">
           {Math.round(progress * 100)}% scrolled
         </p>
       </div>
@@ -287,6 +313,8 @@ function DefaultPreview({
   ease: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const cssEase = toCssEasing(ease);
+  const isApproximated = isGsapEasing(ease);
 
   const play = useCallback(() => {
     const el = ref.current;
@@ -308,7 +336,7 @@ function DefaultPreview({
 
     const timer = setTimeout(play, 100);
     return () => clearTimeout(timer);
-  }, [animation.name, duration, delay, ease, play]);
+  }, [animation.name, duration, delay, cssEase, play]);
 
   const durSec = /^\d+(\.\d+)?$/.test(duration) ? `${duration}s` : duration;
   const delSec = /^\d+(\.\d+)?$/.test(delay) ? `${delay}s` : delay;
@@ -317,7 +345,12 @@ function DefaultPreview({
     <PreviewWrapper
       onReplay={play}
       label={animation.label}
-      sublabel={animation.description}>
+      sublabel={animation.description}
+      notice={
+        isApproximated
+          ? "GSAP easing approximated with CSS cubic-bezier for preview"
+          : undefined
+      }>
       <div
         ref={ref}
         data-anim={animation.name}
@@ -326,14 +359,14 @@ function DefaultPreview({
           {
             "--fg-dur": durSec,
             "--fg-del": delSec,
-            "--fg-ease": ease,
+            "--fg-ease": cssEase,
           } as React.CSSProperties
         }>
-        <div className="text-center px-4 py-3 sm:px-6 sm:py-4">
-          <p className="text-sm sm:text-lg font-semibold text-foreground">
+        <div className="text-center px-4 py-6 sm:px-8 sm:py-8">
+          <p className="text-base sm:text-xl font-semibold text-foreground">
             {animation.label}
           </p>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
             {animation.description}
           </p>
         </div>
@@ -346,17 +379,26 @@ function DefaultPreview({
 function PreviewWrapper({
   children,
   onReplay,
+  notice,
 }: {
   children: React.ReactNode;
   onReplay: () => void;
   label: string;
   sublabel: string;
+  notice?: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-muted/30 min-h-28 sm:min-h-40 flex flex-col items-center justify-center">
-      <div className="flex-1 flex items-center justify-center w-full px-4 py-3 sm:px-6 sm:py-4">
+    <div className="relative overflow-hidden rounded-xl border border-border bg-muted/30 min-h-48 sm:min-h-64 flex flex-col items-center justify-center">
+      <div className="flex-1 flex items-center justify-center w-full px-6 py-6 sm:px-10 sm:py-8">
         {children}
       </div>
+
+      {/* GSAP approximation notice */}
+      {notice && (
+        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 text-[9px] sm:text-[10px] text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md max-w-50 sm:max-w-none">
+          ⚠ {notice}
+        </div>
+      )}
 
       {/* Replay button */}
       <button

@@ -1,20 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import {
-  ANIMATION_REGISTRY,
-  CATEGORIES,
-  type AnimationDef,
-} from "@/lib/animations";
-import { AnimationCard } from "@/components/animation-card";
-import { AnimationPreview } from "@/components/animation-preview";
-import { Configurator, type AnimConfig } from "@/components/configurator";
-import { CodeExport } from "@/components/code-export";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useState } from "react";
+import { ANIMATION_REGISTRY, type AnimationDef } from "@/lib/animations";
+import type { AnimConfig } from "@/components/configurator";
+import { DocsSidebar } from "@/components/docs-sidebar";
+import { DocsToc } from "@/components/docs-toc";
+import { IntroductionContent } from "@/components/content-introduction";
+import { InstallationContent } from "@/components/content-installation";
+import { ContentAnimation } from "@/components/content-animation";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -22,7 +16,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Menu, BookOpen } from "lucide-react";
+
+type NavSection = "introduction" | "installation" | "animations";
 
 const DEFAULT_CONFIG: AnimConfig = {
   duration: "0.5",
@@ -35,162 +32,130 @@ const DEFAULT_CONFIG: AnimConfig = {
   direction: "normal",
 };
 
-function SidebarContent({
-  selected,
-  config,
-  setConfig,
-}: {
-  selected: AnimationDef;
-  config: AnimConfig;
-  setConfig: (c: AnimConfig) => void;
-}) {
-  return (
-    <div className="space-y-6">
-      {/* Selected animation info */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold">{selected.label}</h2>
-          <Badge
-            variant="outline"
-            className={
-              selected.engine === "css"
-                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
-                : "bg-violet-500/15 text-violet-700 dark:text-violet-400 border-violet-500/20"
-            }>
-            {selected.engine === "css" ? "CSS" : "GSAP"}
-          </Badge>
-        </div>
-        <p className="text-sm text-muted-foreground">{selected.description}</p>
-      </div>
-
-      {/* Live preview */}
-      <AnimationPreview
-        animation={selected}
-        duration={config.duration}
-        delay={config.delay}
-        ease={config.ease}
-        stagger={config.stagger}
-      />
-
-      <Separator />
-
-      {/* Configurator */}
-      <Configurator
-        config={config}
-        onChange={setConfig}
-        animationName={selected.name}
-      />
-
-      <Separator />
-
-      {/* Code export */}
-      <CodeExport animation={selected} config={config} />
-    </div>
-  );
-}
-
 export function Showcase() {
-  const [selected, setSelected] = useState<AnimationDef>(
-    ANIMATION_REGISTRY[0]!,
-  );
+  const [activeSection, setActiveSection] =
+    useState<NavSection>("introduction");
+  const [selectedAnimation, setSelectedAnimation] =
+    useState<AnimationDef | null>(null);
   const [config, setConfig] = useState<AnimConfig>(DEFAULT_CONFIG);
-  const [filter, setFilter] = useState<string>("All");
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
-  const filtered = useMemo(() => {
-    if (filter === "All") return ANIMATION_REGISTRY;
-    if (filter === "CSS")
-      return ANIMATION_REGISTRY.filter((a) => a.engine === "css");
-    if (filter === "GSAP")
-      return ANIMATION_REGISTRY.filter((a) => a.engine === "gsap");
-    return ANIMATION_REGISTRY.filter((a) => a.category === filter);
-  }, [filter]);
-
-  const filterTabs = ["All", "CSS", "GSAP", ...CATEGORIES];
-
-  const handleSelect = (anim: AnimationDef) => {
-    setSelected(anim);
-    // On mobile, auto-open the configurator sheet when selecting
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setSheetOpen(true);
+  const handleSectionChange = (section: NavSection) => {
+    setActiveSection(section);
+    if (section !== "animations") {
+      setSelectedAnimation(null);
     }
+    setMobileNavOpen(false);
+  };
+
+  const handleSelectAnimation = (anim: AnimationDef) => {
+    setActiveSection("animations");
+    setSelectedAnimation(anim);
+    setConfig(DEFAULT_CONFIG);
+    setMobileNavOpen(false);
+  };
+
+  // Render center content
+  const renderContent = () => {
+    if (activeSection === "introduction") {
+      return <IntroductionContent />;
+    }
+    if (activeSection === "installation") {
+      return <InstallationContent />;
+    }
+    if (selectedAnimation) {
+      return (
+        <ContentAnimation
+          animation={selectedAnimation}
+          config={config}
+          onConfigChange={setConfig}
+        />
+      );
+    }
+    // Animations section with no specific animation selected — show the first
+    const first = ANIMATION_REGISTRY[0]!;
+    return (
+      <ContentAnimation
+        animation={first}
+        config={config}
+        onConfigChange={setConfig}
+      />
+    );
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Left: Gallery */}
-      <div className="flex-1 min-w-0 space-y-4">
-        {/* Filter tabs — horizontal scrollable */}
-        <ScrollArea className="w-full whitespace-nowrap">
-          <Tabs value={filter} onValueChange={setFilter}>
-            <TabsList className="inline-flex h-9">
-              {filterTabs.map((tab) => (
-                <TabsTrigger key={tab} value={tab} className="text-xs px-3">
-                  {tab}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-
-        {/* Results count */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>
-            {filtered.length} animation{filtered.length !== 1 && "s"}
-          </span>
-          <span>·</span>
-          <span>{filtered.filter((a) => a.engine === "css").length} CSS</span>
-          <span>·</span>
-          <span>{filtered.filter((a) => a.engine === "gsap").length} GSAP</span>
-        </div>
-
-        {/* Animation grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-          {filtered.map((anim) => (
-            <AnimationCard
-              key={anim.name}
-              animation={anim}
-              isSelected={selected.name === anim.name}
-              onSelect={handleSelect}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Right: Desktop sidebar — hidden on mobile */}
-      <aside className="hidden lg:block w-80 xl:w-96 shrink-0">
-        <div className="sticky top-6 space-y-6">
-          <SidebarContent
-            selected={selected}
-            config={config}
-            setConfig={setConfig}
-          />
-        </div>
+    <div className="flex h-[calc(100vh-57px)]">
+      {/* Left Sidebar — Desktop */}
+      <aside className="hidden lg:flex w-64 xl:w-72 shrink-0 border-r border-border bg-card/50">
+        <DocsSidebar
+          activeSection={activeSection}
+          onSectionChange={handleSectionChange}
+          selectedAnimation={selectedAnimation}
+          onSelectAnimation={handleSelectAnimation}
+        />
       </aside>
 
-      {/* Mobile: Sticky FAB + Sheet */}
-      <div className="lg:hidden fixed bottom-4 right-4 z-50">
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      {/* Center Content */}
+      <main className="flex-1 min-w-0">
+        <ScrollArea className="h-full">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 pb-24 lg:pb-10">
+            {renderContent()}
+          </div>
+        </ScrollArea>
+      </main>
+
+      {/* Right TOC — Desktop */}
+      <aside className="hidden xl:flex w-56 shrink-0 border-l border-border bg-card/50">
+        <DocsToc
+          activeSection={activeSection}
+          selectedAnimation={selectedAnimation}
+        />
+      </aside>
+
+      {/* Mobile: Top bar buttons (FABs) */}
+      <div className="lg:hidden fixed bottom-4 left-4 z-50">
+        <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger asChild>
             <Button
-              size="lg"
-              className="rounded-full shadow-lg gap-2 h-12 px-5">
-              <SlidersHorizontal className="size-4" />
-              <span className="text-sm font-medium">Configure</span>
+              size="icon"
+              variant="outline"
+              className="rounded-full shadow-lg size-12">
+              <Menu className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
-            <SheetHeader className="text-left">
-              <SheetTitle>Animation Settings</SheetTitle>
+          <SheetContent side="left" className="w-72 p-0">
+            <SheetHeader className="px-4 pt-4 pb-0">
+              <SheetTitle className="text-left">Navigation</SheetTitle>
             </SheetHeader>
-            <div className="mt-4 pb-8">
-              <SidebarContent
-                selected={selected}
-                config={config}
-                setConfig={setConfig}
-              />
-            </div>
+            <DocsSidebar
+              activeSection={activeSection}
+              onSectionChange={handleSectionChange}
+              selectedAnimation={selectedAnimation}
+              onSelectAnimation={handleSelectAnimation}
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="xl:hidden fixed bottom-4 right-4 z-50">
+        <Sheet open={mobileTocOpen} onOpenChange={setMobileTocOpen}>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              variant="outline"
+              className="rounded-full shadow-lg size-12">
+              <BookOpen className="size-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-64 p-0">
+            <SheetHeader className="px-4 pt-4 pb-0">
+              <SheetTitle className="text-left">On this page</SheetTitle>
+            </SheetHeader>
+            <DocsToc
+              activeSection={activeSection}
+              selectedAnimation={selectedAnimation}
+            />
           </SheetContent>
         </Sheet>
       </div>
