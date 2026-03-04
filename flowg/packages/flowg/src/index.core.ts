@@ -2,15 +2,18 @@
 // FlowG Core — CSS-Only Animation Engine
 // ~2KB gzipped. No external dependencies.
 //
-// Usage:
-//   <script type="module">
-//     import { initCore } from 'flowgeneration/core';
-//     initCore();
-//   </script>
+// Auto-initializes on import. Just add data-flowg-* attributes
+// to your HTML and include this script — no setup needed.
 //
-//   <div data-flowg-anim="fade-up" data-flowg-duration="0.6">
-//     Hello World
-//   </div>
+// Usage (CDN):
+//   <link rel="stylesheet" href="...flowgeneration/dist/style.css" />
+//   <script type="module" src="...flowgeneration/dist/flowg-core.js"></script>
+//
+// Usage (npm):
+//   import "flowgeneration/core";
+//   import "flowgeneration/style.css";
+//
+//   <div data-flowg-anim="fade-up">Hello World</div>
 // ==========================================================
 
 import "./css/main.scss";
@@ -35,7 +38,8 @@ let _initialized = false;
  * Scans the DOM for `[data-flowg-anim]` elements and sets up
  * IntersectionObserver-based class toggling.
  *
- * Safe to call multiple times — will only initialize once.
+ * This is called automatically on import. You can also call it
+ * manually if needed — safe to call multiple times.
  */
 export function initCore(): void {
   if (_initialized) return;
@@ -52,11 +56,19 @@ export function initCore(): void {
 }
 
 function _setup(): void {
+  _scanAndInit();
+  _observeNewElements();
+}
+
+/**
+ * Scan all existing [data-flowg-anim] elements and set up observers / triggers.
+ */
+function _scanAndInit(): void {
   const allElements =
     document.querySelectorAll<HTMLElement>("[data-flowg-anim]");
 
   // Handle viewport-triggered animations
-  createObserver((el, animName) => {
+  createObserver((el, _animName) => {
     // Only handle CSS animations; skip GSAP-handled elements
     if (el.classList.contains("flowg-js-handled")) return;
 
@@ -66,6 +78,85 @@ function _setup(): void {
 
   // Handle hover/click triggers
   setupTriggers(allElements);
+}
+
+/**
+ * Watch for dynamically added [data-flowg-anim] elements via MutationObserver.
+ * This ensures elements added after initial load (e.g. SPA navigation,
+ * lazy-loaded content) are automatically animated.
+ */
+function _observeNewElements(): void {
+  if (typeof MutationObserver === "undefined") return;
+
+  const mo = new MutationObserver((mutations) => {
+    let hasNew = false;
+
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        const el = node as HTMLElement;
+
+        // Check the element itself
+        if (el.hasAttribute("data-flowg-anim") && !el.classList.contains("flowg-active")) {
+          _initElement(el);
+          hasNew = true;
+        }
+
+        // Check descendants
+        const children = el.querySelectorAll<HTMLElement>(
+          "[data-flowg-anim]:not(.flowg-active)"
+        );
+        children.forEach((child) => {
+          _initElement(child);
+          hasNew = true;
+        });
+      }
+    }
+  });
+
+  mo.observe(document.body, { childList: true, subtree: true });
+}
+
+/**
+ * Initialize a single dynamically-added element.
+ */
+function _initElement(el: HTMLElement): void {
+  // Skip GSAP-handled elements
+  if (el.classList.contains("flowg-js-handled")) return;
+
+  const trigger = el.dataset.flowgTrigger || "viewport";
+
+  injectCssVars(el);
+
+  if (trigger === "viewport") {
+    // Set up a single-element IntersectionObserver
+    const offset = el.dataset.flowgOffset;
+    const rootMargin = offset
+      ? `0px 0px -${offset.startsWith("-") ? offset.slice(1) : offset} 0px`
+      : "0px";
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            injectCssVars(entry.target as HTMLElement);
+            (entry.target as HTMLElement).classList.add("flowg-active");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin, threshold: 0.1 }
+    );
+    observer.observe(el);
+  } else if (trigger === "hover") {
+    el.addEventListener("mouseenter", () => el.classList.add("flowg-active"), {
+      once: true,
+    });
+  } else if (trigger === "click") {
+    el.addEventListener("click", () => el.classList.add("flowg-active"), {
+      once: true,
+    });
+  }
 }
 
 /**
@@ -84,13 +175,7 @@ export function reset(el: HTMLElement): void {
   el.classList.remove("flowg-active");
 }
 
-/**
- * Auto-init: if the script is loaded via a `<script>` tag (IIFE),
- * automatically initialize on DOMContentLoaded.
- */
-if (typeof window !== "undefined" && typeof document !== "undefined") {
-  // Auto-init for IIFE builds
-  if (document.currentScript) {
-    initCore();
-  }
-}
+// ==========================================================
+// Auto-init: runs automatically when this module is imported.
+// ==========================================================
+initCore();

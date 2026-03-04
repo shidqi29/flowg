@@ -4,29 +4,9 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { CodeBlock } from "@/components/code-block";
 
 type PackageManager = "npm" | "pnpm" | "yarn";
-
-function CopyBlock({ code }: { code: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  return (
-    <div className="relative">
-      <pre className="rounded-lg bg-muted p-3 text-[11px] sm:text-xs overflow-x-auto leading-relaxed font-mono">
-        <code>{code}</code>
-      </pre>
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 text-[10px] px-2 py-1 rounded-md bg-background/80 border border-border text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-        {copied ? "Copied!" : "Copy"}
-      </button>
-    </div>
-  );
-}
 
 export function InstallationContent() {
   const [pm, setPm] = useState<PackageManager>("npm");
@@ -81,7 +61,7 @@ export function InstallationContent() {
               </Badge>
               CSS-only animations (no GSAP needed)
             </p>
-            <CopyBlock code={installCmd[pm]} />
+            <CodeBlock code={installCmd[pm]} language="bash" />
           </div>
 
           <div>
@@ -93,7 +73,7 @@ export function InstallationContent() {
               </Badge>
               With GSAP for advanced animations
             </p>
-            <CopyBlock code={gsapInstallCmd[pm]} />
+            <CodeBlock code={gsapInstallCmd[pm]} language="bash" />
           </div>
         </div>
       </section>
@@ -113,15 +93,13 @@ export function InstallationContent() {
 
         <div className="space-y-3">
           <p className="text-xs font-medium text-foreground">Core Engine</p>
-          <CopyBlock
+          <CodeBlock
+            language="html"
             code={`<!-- FlowG CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
 
-<!-- FlowG Core (~2KB) -->
-<script type="module">
-  import { initCore } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js";
-  initCore();
-</script>`}
+<!-- FlowG Core (~2KB) — auto-initializes, no setup needed -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>`}
           />
         </div>
 
@@ -129,18 +107,16 @@ export function InstallationContent() {
           <p className="text-xs font-medium text-foreground">
             Pro Engine (+ GSAP)
           </p>
-          <CopyBlock
+          <CodeBlock
+            language="html"
             code={`<!-- FlowG CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
 
 <!-- GSAP (must load before FlowG Pro) -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
 
-<!-- FlowG Pro -->
-<script type="module">
-  import { initPro } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js";
-  initPro();
-</script>`}
+<!-- FlowG Pro — auto-initializes, no setup needed -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js"></script>`}
           />
         </div>
       </section>
@@ -194,7 +170,8 @@ export function InstallationContent() {
           </code>{" "}
           to any element. That&apos;s it.
         </p>
-        <CopyBlock
+        <CodeBlock
+          language="html"
           code={`<!-- Fade up on scroll -->
 <div data-flowg-anim="fade-up">
   Hello World

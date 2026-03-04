@@ -37,11 +37,11 @@ npm install flowgeneration gsap
 
 ### CSS-Only (Core Engine)
 
-```js
-import { initCore } from "flowgeneration/core";
-import "flowgeneration/style.css";
+Just import — it auto-initializes. No setup function needed.
 
-initCore();
+```js
+import "flowgeneration/core";
+import "flowgeneration/style.css";
 ```
 
 ```html
@@ -51,10 +51,8 @@ initCore();
 ### With GSAP (Pro Engine)
 
 ```js
-import { initPro } from "flowgeneration/pro";
+import "flowgeneration/pro";
 import "flowgeneration/style.css";
-
-initPro();
 ```
 
 ```html
@@ -65,16 +63,23 @@ initPro();
 
 ### Via CDN (Script Tag)
 
+No init call required — the script auto-detects `data-flowg-*` elements.
+
 ```html
 <!-- Core only (~2KB gzip) -->
-<link rel="stylesheet" href="https://unpkg.com/flowgeneration/dist/style.css" />
-<script type="module">
-  import { initCore } from "https://unpkg.com/flowgeneration/dist/flowg-core.js";
-  initCore();
-</script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>
 
 <div data-flowg-anim="fade-up">Content</div>
 ```
+
+### Dynamic Elements
+
+FlowG automatically watches for new elements added to the DOM (via MutationObserver). Elements added after page load — from SPA navigation, lazy loading, or JavaScript — are animated automatically.
 
 ## API — `data-flowg-*` Attributes
 
@@ -103,13 +108,12 @@ These require the Pro engine with GSAP installed:
 
 ```typescript
 import {
-  initCore,
   activate,
   reset,
   CSS_ANIMATIONS,
   ANIMATION_REGISTRY,
 } from "flowgeneration/core";
-import { initPro, GSAP_ANIMATIONS } from "flowgeneration/pro";
+import { GSAP_ANIMATIONS } from "flowgeneration/pro";
 
 // Manually trigger an element
 activate(document.querySelector("#my-el"));
@@ -117,6 +121,10 @@ activate(document.querySelector("#my-el"));
 // Reset to pre-animation state
 reset(document.querySelector("#my-el"));
 ```
+
+> **Note:** `initCore()` and `initPro()` are still exported for backward
+> compatibility, but calling them is no longer required. The library
+> auto-initializes when imported.
 
 ## Webflow Integration
 
@@ -139,10 +147,9 @@ Paste this in **Project Settings → Custom Code → Head Code**:
 Paste this in **Project Settings → Custom Code → Footer Code**:
 
 ```html
-<script type="module">
-  import { initCore } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js";
-  initCore();
-</script>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>
 ```
 
 **For GSAP-powered animations (Pro):**
@@ -151,13 +158,13 @@ You must add the GSAP library **before** FlowG Pro. Paste this in **Footer Code*
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script type="module">
-  import { initPro } from "https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js";
-  initPro();
-</script>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js"></script>
 ```
 
 > ⚠️ GSAP must load **before** FlowG Pro. Keep the order above.
+> No `initCore()` or `initPro()` call needed — the scripts auto-initialize.
 
 ### Step 3: Add Attributes to Elements
 

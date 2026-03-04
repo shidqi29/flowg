@@ -9,14 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-  Package,
-  Zap,
-  BookOpen,
-  Download,
-  Blocks,
-  ChevronRight,
-} from "lucide-react";
+import { Package, Zap, BookOpen, Download, Blocks } from "lucide-react";
 
 type NavSection = "introduction" | "installation" | "animations";
 
@@ -52,7 +45,7 @@ export function DocsSidebar({
   }, []);
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full w-full">
       <div className="p-4 space-y-1">
         {/* Brand */}
         <div className="flex items-center gap-2 px-2 py-1.5 mb-3">
@@ -115,12 +108,7 @@ export function DocsSidebar({
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}>
-                    <span className="flex items-center gap-2 truncate">
-                      <ChevronRight
-                        className={`size-3 shrink-0 transition-transform ${isActive ? "rotate-90" : "group-hover:translate-x-0.5"}`}
-                      />
-                      <span className="truncate">{anim.label}</span>
-                    </span>
+                    <span className="truncate">{anim.label}</span>
                     <Badge
                       variant="outline"
                       className={`shrink-0 text-[9px] px-1.5 py-0 h-4 ${

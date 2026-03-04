@@ -1,4 +1,5 @@
 import { Showcase } from "@/components/showcase";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
                   title="GSAP Pro"
                 />
               </div>
+              <ThemeToggle />
             </div>
           </div>
         </div>

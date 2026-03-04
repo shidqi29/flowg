@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { CodeBlock } from "@/components/code-block";
 import { Zap, Feather, Code2, Layers, Globe } from "lucide-react";
 
 export function IntroductionContent() {
@@ -80,10 +81,12 @@ export function IntroductionContent() {
               Handles fades, slides, zooms, flips, blurs, rotations, and
               bounces.
             </p>
-            <pre className="text-[10px] bg-background/80 rounded p-2 overflow-x-auto">
-              <code>{`import { initCore } from "flowgeneration/core";
-initCore();`}</code>
-            </pre>
+            <CodeBlock
+              language="js"
+              code={`// Auto-initializes on import — no setup needed
+import "flowgeneration/core";
+import "flowgeneration/style.css";`}
+            />
           </div>
 
           {/* Pro */}
@@ -106,10 +109,12 @@ initCore();`}</code>
               staggering, scroll-scrubbing, physics bounces, typewriter effects,
               and counters.
             </p>
-            <pre className="text-[10px] bg-background/80 rounded p-2 overflow-x-auto">
-              <code>{`import { initPro } from "flowgeneration/pro";
-initPro();`}</code>
-            </pre>
+            <CodeBlock
+              language="js"
+              code={`// Auto-initializes on import — no setup needed
+import "flowgeneration/pro";
+import "flowgeneration/style.css";`}
+            />
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { CodeBlock } from "@/components/code-block";
 import type { AnimationDef } from "@/lib/animations";
 import { generateScriptTag, generateSnippet } from "@/lib/animations";
 import type { AnimConfig } from "@/components/configurator";
@@ -13,7 +14,6 @@ interface CodeExportProps {
 }
 
 export function CodeExport({ animation, config }: CodeExportProps) {
-  const [copied, setCopied] = useState(false);
   const [platform, setPlatform] = useState<"standard" | "webflow">("standard");
 
   const scriptTag = generateScriptTag(animation.name, platform);
@@ -30,12 +30,6 @@ export function CodeExport({ animation, config }: CodeExportProps) {
   });
 
   const fullSnippet = `${scriptTag}\n\n${htmlSnippet}`;
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(fullSnippet);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="space-y-3">
@@ -124,16 +118,7 @@ export function CodeExport({ animation, config }: CodeExportProps) {
         </div>
       )}
 
-      <div className="relative">
-        <pre className="rounded-lg bg-muted p-3 sm:p-4 text-[11px] sm:text-xs overflow-x-auto leading-relaxed">
-          <code>{fullSnippet}</code>
-        </pre>
-        <button
-          onClick={handleCopy}
-          className="absolute top-2 right-2 text-[10px] sm:text-xs px-2 py-1 rounded-md bg-background/80 border border-border text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
+      <CodeBlock code={fullSnippet} language="html" />
     </div>
   );
 }

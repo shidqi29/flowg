@@ -2,15 +2,17 @@
 // FlowG Pro — GSAP-Powered Animation Engine
 // Extends Core with JavaScript-driven animations.
 //
-// Usage:
-//   <script type="module">
-//     import { initPro } from 'flowgeneration/pro';
-//     initPro();
-//   </script>
+// Auto-initializes on import. Just add data-flowg-* attributes
+// to your HTML and include this script — no setup needed.
 //
-//   <div data-flowg-anim="text-stagger" data-flowg-duration="0.8">
-//     Hello World
-//   </div>
+// Usage (CDN):
+//   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+//   <link rel="stylesheet" href="...flowgeneration/dist/style.css" />
+//   <script type="module" src="...flowgeneration/dist/flowg-pro.js"></script>
+//
+// Usage (npm):
+//   import "flowgeneration/pro";
+//   import "flowgeneration/style.css";
 // ==========================================================
 
 import { initCore, activate, reset } from "./index.core.js";
@@ -189,6 +191,9 @@ const GSAP_HANDLERS: Record<string, GsapHandler> = {
 /**
  * Initialize the FlowG Pro engine.
  * Runs Core for CSS animations, then handles GSAP animations.
+ *
+ * This is called automatically on import. You can also call it
+ * manually if needed — safe to call multiple times.
  */
 export function initPro(): void {
   if (_proInitialized) return;
@@ -207,58 +212,100 @@ export function initPro(): void {
 }
 
 function _setupPro(): void {
+  _scanGsapElements();
+  _observeNewGsapElements();
+}
+
+/**
+ * Scan all existing GSAP elements and wire them up.
+ */
+function _scanGsapElements(): void {
   const elements =
     document.querySelectorAll<HTMLElement>("[data-flowg-anim]");
 
   elements.forEach((el) => {
-    const animName = el.dataset.flowgAnim;
-    if (!animName || !isGsapAnimation(animName)) return;
-
-    // Mark element so CSS engine skips it
-    el.classList.add("flowg-js-handled");
-
-    const trigger = el.dataset.flowgTrigger || "viewport";
-    const vars = readVars(el);
-    const handler = GSAP_HANDLERS[animName];
-
-    if (!handler) {
-      // Unknown GSAP animation — do a generic GSAP fade-up
-      gsap.from(el, { opacity: 0, y: 50, ...vars });
-      return;
-    }
-
-    if (trigger === "viewport") {
-      // Use IntersectionObserver
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              handler(entry.target as HTMLElement, vars);
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        {
-          rootMargin: el.dataset.flowgOffset
-            ? `0px 0px -${el.dataset.flowgOffset} 0px`
-            : "0px",
-          threshold: 0.1,
-        }
-      );
-      observer.observe(el);
-    } else if (trigger === "hover") {
-      el.addEventListener("mouseenter", () => handler(el, vars), {
-        once: true,
-      });
-    } else if (trigger === "click") {
-      el.addEventListener("click", () => handler(el, vars), { once: true });
-    }
+    _initGsapElement(el);
   });
 }
 
-// Auto-init for IIFE builds
-if (typeof window !== "undefined" && typeof document !== "undefined") {
-  if (document.currentScript) {
-    initPro();
+/**
+ * Initialize a single element for GSAP animation (if applicable).
+ */
+function _initGsapElement(el: HTMLElement): void {
+  const animName = el.dataset.flowgAnim;
+  if (!animName || !isGsapAnimation(animName)) return;
+  // Skip already-handled elements
+  if (el.classList.contains("flowg-js-handled")) return;
+
+  // Mark element so CSS engine skips it
+  el.classList.add("flowg-js-handled");
+
+  const trigger = el.dataset.flowgTrigger || "viewport";
+  const vars = readVars(el);
+  const handler = GSAP_HANDLERS[animName];
+
+  if (!handler) {
+    // Unknown GSAP animation — do a generic GSAP fade-up
+    gsap.from(el, { opacity: 0, y: 50, ...vars });
+    return;
+  }
+
+  if (trigger === "viewport") {
+    // Use IntersectionObserver
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            handler(entry.target as HTMLElement, vars);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: el.dataset.flowgOffset
+          ? `0px 0px -${el.dataset.flowgOffset} 0px`
+          : "0px",
+        threshold: 0.1,
+      }
+    );
+    observer.observe(el);
+  } else if (trigger === "hover") {
+    el.addEventListener("mouseenter", () => handler(el, vars), {
+      once: true,
+    });
+  } else if (trigger === "click") {
+    el.addEventListener("click", () => handler(el, vars), { once: true });
   }
 }
+
+/**
+ * Watch for dynamically added GSAP elements via MutationObserver.
+ */
+function _observeNewGsapElements(): void {
+  if (typeof MutationObserver === "undefined") return;
+
+  const mo = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        const el = node as HTMLElement;
+
+        // Check the element itself
+        if (el.hasAttribute("data-flowg-anim")) {
+          _initGsapElement(el);
+        }
+
+        // Check descendants
+        const children = el.querySelectorAll<HTMLElement>("[data-flowg-anim]");
+        children.forEach((child) => _initGsapElement(child));
+      }
+    }
+  });
+
+  mo.observe(document.body, { childList: true, subtree: true });
+}
+
+// ==========================================================
+// Auto-init: runs automatically when this module is imported.
+// ==========================================================
+initPro();

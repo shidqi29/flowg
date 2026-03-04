@@ -87,7 +87,7 @@ export function Showcase() {
   return (
     <div className="flex h-[calc(100vh-57px)]">
       {/* Left Sidebar — Desktop */}
-      <aside className="hidden lg:flex w-64 xl:w-72 shrink-0 border-r border-border bg-card/50">
+      <aside className="hidden lg:flex w-72 xl:w-80 shrink-0 border-r border-border bg-card/50">
         <DocsSidebar
           activeSection={activeSection}
           onSectionChange={handleSectionChange}
