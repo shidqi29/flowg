@@ -148,8 +148,8 @@ export function Configurator({ config, onChange }: ConfiguratorProps) {
         </Select>
         {isGsapEase && (
           <p className="text-[10px] text-amber-600 dark:text-amber-400">
-            ⚠ GSAP easings require the Pro engine. Preview uses a CSS
-            approximation.
+            ⚠ GSAP easings are handled natively by the GSAP engine. Preview uses
+            a CSS approximation.
           </p>
         )}
       </div>

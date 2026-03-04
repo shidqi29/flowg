@@ -15,9 +15,9 @@ interface TOCItem {
 const INTRO_TOC: TOCItem[] = [
   { id: "what-is-flowg", label: "What is FlowG?", level: 0 },
   { id: "core-philosophy", label: "Core Philosophy", level: 0 },
-  { id: "hybrid-engine", label: "Hybrid Engine", level: 1 },
-  { id: "css-core", label: "CSS Core (~2KB)", level: 2 },
-  { id: "gsap-pro", label: "GSAP Pro Engine", level: 2 },
+  { id: "smart-loading", label: "Smart Loading", level: 1 },
+  { id: "css-layer", label: "CSS Layer", level: 2 },
+  { id: "gsap-layer", label: "GSAP Layer (On Demand)", level: 2 },
   { id: "features", label: "Features", level: 0 },
 ];
 

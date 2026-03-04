@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlowG — CDN Compatibility Test</title>
+
+    <!-- Load FlowG stylesheet -->
+    <link rel="stylesheet" href="./dist/style.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0a0a0a;
+            color: #fafafa;
+            padding: 2rem;
+            min-height: 300vh;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            color: #a78bfa;
+        }
+
+        h2 {
+            margin: 2rem 0 1rem;
+            color: #6ee7b7;
+            font-size: 1.2rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+
+        .status.pass {
+            background: #052e16;
+            color: #4ade80;
+            border: 1px solid #16a34a;
+        }
+
+        .status.fail {
+            background: #2e0505;
+            color: #f87171;
+            border: 1px solid #dc2626;
+        }
+
+        .status.info {
+            background: #1e1b4b;
+            color: #a78bfa;
+            border: 1px solid #7c3aed;
+        }
+
+        #log {
+            margin-top: 2rem;
+        }
+
+        /* Space for scroll test */
+        .spacer {
+            height: 60vh;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>FlowG CDN Compatibility Test</h1>
+    <p style="color:#888; margin-bottom:2rem;">
+        This page loads <code>flowg.js</code> via a local file path
+        (simulating CDN delivery via <code>&lt;script type="module"&gt;</code>).
+        Open DevTools → Network tab to verify chunk loading behavior.
+    </p>
+
+    <!-- ========================================== -->
+    <!-- CSS Animations (should work without GSAP) -->
+    <!-- ========================================== -->
+    <div class="section">
+        <h2>🎨 CSS Animations (no GSAP should load)</h2>
+
+        <div class="card" data-flowg-anim="fade-up">
+            ✅ fade-up — CSS only
+        </div>
+
+        <div class="card" data-flowg-anim="slide-left" data-flowg-delay="0.2">
+            ✅ slide-left — CSS only (0.2s delay)
+        </div>
+
+        <div class="card" data-flowg-anim="scale-in" data-flowg-duration="0.8">
+            ✅ scale-in — CSS only (0.8s duration)
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- GSAP Animations (should lazy-load GSAP)   -->
+    <!-- ========================================== -->
+    <div class="section">
+        <h2>⚡ GSAP Animations (should lazy-load GSAP core)</h2>
+
+        <div class="card" data-flowg-anim="split-text" data-flowg-delay="0.5">
+            Hello FlowG World!
+        </div>
+
+        <div class="card" data-flowg-anim="typewriter">
+            This text is typed out character by character.
+        </div>
+
+        <div class="card" data-flowg-anim="physics-bounce">
+            ⬇️ Physics Bounce
+        </div>
+
+        <div class="card" data-flowg-anim="counter" data-flowg-duration="2.5">
+            42000
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ScrollTrigger (should lazy-load plugin)    -->
+    <!-- ========================================== -->
+    <div class="spacer"></div>
+
+    <div class="section">
+        <h2>📜 ScrollTrigger Animation (should lazy-load ScrollTrigger plugin)</h2>
+
+        <div class="card" data-flowg-anim="scroll-scrub">
+            🎯 Scroll-scrub — requires ScrollTrigger plugin
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- ========================================== -->
+    <!-- Dynamic Element Test                       -->
+    <!-- ========================================== -->
+    <div class="section">
+        <h2>🔄 Dynamic Element Test</h2>
+        <button onclick="addDynamicElement()" style="
+      background: #7c3aed; color: white; border: none;
+      padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;
+      font-size: 1rem; margin-bottom: 1rem;
+    ">
+            Add Dynamic Element
+        </button>
+        <div id="dynamic-container"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- Log Output                                 -->
+    <!-- ========================================== -->
+    <div id="log">
+        <h2>📋 Load Log</h2>
+    </div>
+
+    <!-- Load FlowG as ES module (simulates CDN <script type="module">) -->
+    <script type="module">
+        // Intercept dynamic imports to log them
+        const origLog = console.log;
+        const logEl = document.getElementById("log");
+
+        function addStatus(text, type = "info") {
+            const div = document.createElement("div");
+            div.className = `status ${type}`;
+            div.textContent = `[${new Date().toISOString().slice(11, 23)}] ${text}`;
+            logEl.appendChild(div);
+            origLog(text);
+        }
+
+        // Monitor network for chunk loads
+        const perfObserver = new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+                if (entry.name.includes("chunks/") || entry.name.includes("gsap")) {
+                    addStatus(`📦 Loaded: ${entry.name.split("/").pop()} (${Math.round(entry.duration)}ms)`, "pass");
+                }
+            }
+        });
+        perfObserver.observe({ entryTypes: ["resource"] });
+
+        addStatus("Starting FlowG import...", "info");
+
+        try {
+            const flowg = await import("./dist/flowg.js");
+            addStatus("✅ FlowG loaded successfully!", "pass");
+            addStatus(`Exports: ${Object.keys(flowg).join(", ")}`, "info");
+            addStatus(`CSS animations: ${flowg.CSS_ANIMATIONS.length}`, "info");
+            addStatus(`GSAP animations: ${flowg.GSAP_ANIMATIONS.length}`, "info");
+        } catch (err) {
+            addStatus(`❌ FlowG failed to load: ${err.message}`, "fail");
+            console.error(err);
+        }
+
+        // Make dynamic element function available
+        window.addDynamicElement = function () {
+            const container = document.getElementById("dynamic-container");
+            const el = document.createElement("div");
+            el.className = "card";
+            el.setAttribute("data-flowg-anim", "fade-up");
+            el.textContent = "🆕 Dynamically added fade-up element!";
+            container.appendChild(el);
+            addStatus("Added dynamic element with fade-up animation", "info");
+        };
+    </script>
+
+</body>
+
+</html>

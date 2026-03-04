@@ -42,7 +42,7 @@ export function CodeExport({ animation, config }: CodeExportProps) {
               ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
               : "bg-violet-500/15 text-violet-700 dark:text-violet-400 border-violet-500/20"
           }`}>
-          {animation.engine === "css" ? "Core (~2KB)" : "Pro (requires GSAP)"}
+          {animation.engine === "css" ? "CSS" : "GSAP (loaded on demand)"}
         </Badge>
       </div>
 
@@ -67,25 +67,13 @@ export function CodeExport({ animation, config }: CodeExportProps) {
 
       {animation.engine === "css" ? (
         <p className="text-xs text-muted-foreground">
-          This is a lightweight CSS animation. Use the <strong>Core</strong>{" "}
-          engine — no dependencies.
+          This is a lightweight CSS animation — no JavaScript overhead.
         </p>
       ) : (
         <p className="text-xs text-muted-foreground">
-          This animation requires the <strong>Pro Engine</strong>.{" "}
-          {platform === "webflow" ? (
-            <>
-              You must add the <strong>GSAP script</strong> to your Webflow
-              project.
-            </>
-          ) : (
-            <>
-              Install GSAP:{" "}
-              <code className="text-[10px] bg-muted px-1 py-0.5 rounded">
-                npm install gsap
-              </code>
-            </>
-          )}
+          This animation uses GSAP which is{" "}
+          <strong>automatically loaded</strong> on demand. No separate GSAP
+          install needed.
         </p>
       )}
 
@@ -101,7 +89,7 @@ export function CodeExport({ animation, config }: CodeExportProps) {
               <strong>Head Code</strong> section
             </li>
             <li>
-              Paste the <code>&lt;script&gt;</code> tags in the{" "}
+              Paste the <code>&lt;script&gt;</code> tag in the{" "}
               <strong>Footer Code</strong> section
             </li>
             <li>
@@ -109,12 +97,6 @@ export function CodeExport({ animation, config }: CodeExportProps) {
               <strong>Element Settings → Custom Attributes</strong>
             </li>
           </ol>
-          {animation.engine === "gsap" && (
-            <p className="mt-1.5 text-amber-600 dark:text-amber-400">
-              ⚠️ GSAP must be loaded <strong>before</strong> FlowG Pro. The
-              snippet below includes it.
-            </p>
-          )}
         </div>
       )}
 

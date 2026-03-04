@@ -19,21 +19,18 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        "flowg-core": resolve(__dirname, "src/index.core.ts"),
-        "flowg-pro": resolve(__dirname, "src/index.pro.ts"),
+        flowg: resolve(__dirname, "src/index.ts"),
       },
       formats: ["es"],
       name: "FlowG",
       fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ["gsap"],
       output: {
         assetFileNames: "style.[ext]",
-        chunkFileNames: "[name].js",
-        globals: {
-          gsap: "gsap",
-        },
+        // Dynamic imports produce separate chunks (e.g. gsap-loader, gsap-handlers)
+        // so GSAP is only loaded when needed
+        chunkFileNames: "chunks/[name]-[hash].js",
       },
     },
     cssCodeSplit: false,

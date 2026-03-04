@@ -1,6 +1,6 @@
 {
   "name": "flowgeneration",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "type": "module",
   "description": "Zero-bloat, attribute-driven animation library. CSS-first with optional GSAP power.",
   "keywords": [
@@ -30,19 +30,15 @@
     "*.scss"
   ],
   "exports": {
-    "./core": {
-      "types": "./dist/index.core.d.ts",
-      "import": "./dist/flowg-core.js"
-    },
-    "./pro": {
-      "types": "./dist/index.pro.d.ts",
-      "import": "./dist/flowg-pro.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/flowg.js"
     },
     "./style.css": "./dist/style.css"
   },
-  "main": "./dist/flowg-core.js",
-  "module": "./dist/flowg-core.js",
-  "types": "./dist/index.core.d.ts",
+  "main": "./dist/flowg.js",
+  "module": "./dist/flowg.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -56,6 +52,9 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "pnpm run clean && pnpm run build"
   },
+  "dependencies": {
+    "gsap": "^3.14.2"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "sass": "^1.83.0",
@@ -63,14 +62,6 @@
     "typescript": "5.9.2",
     "vite": "^6.3.0",
     "vite-plugin-dts": "^4.5.0"
-  },
-  "peerDependencies": {
-    "gsap": "^3.12.0"
-  },
-  "peerDependenciesMeta": {
-    "gsap": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public",

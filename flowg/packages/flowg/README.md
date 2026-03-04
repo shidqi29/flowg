@@ -1,7 +1,7 @@
 # FlowG
 
 **Zero-bloat, attribute-driven animation library.**
-CSS-first with optional GSAP power.
+One import — CSS animations load instantly, GSAP loads on demand.
 
 [![npm version](https://img.shields.io/npm/v/flowgeneration.svg)](https://www.npmjs.com/package/flowgeneration)
 [![gzip size](https://img.shields.io/bundlephobia/minzip/flowgeneration)](https://bundlephobia.com/package/flowgeneration)
@@ -11,11 +11,11 @@ CSS-first with optional GSAP power.
 
 ## Features
 
-- 🪶 **Tiny Core** — ~2KB gzipped CSS-only engine, zero dependencies
-- 🎬 **Pro Engine** — Optional GSAP-powered animations (text stagger, scroll scrub, physics)
-- 📐 **Attribute-driven** — No JavaScript needed for simple animations
-- 🎯 **Smart Observer** — IntersectionObserver with configurable offsets
-- 🎛️ **Configurable** — Duration, delay, easing, trigger via `data-flowg-*` attributes
+- 🪶 **Smart Loading** — CSS animations ~3KB gzipped. GSAP loads only when needed.
+- 🎬 **GSAP Included** — Text stagger, scroll scrub, physics bounce — no separate install.
+- 📐 **Attribute-driven** — No JavaScript needed. Just `data-flowg-*` attributes.
+- 🎯 **Plugin-aware** — ScrollTrigger and other GSAP plugins load only when an animation uses them.
+- 🎛️ **Configurable** — Duration, delay, easing, trigger via data attributes.
 
 ## Installation
 
@@ -27,35 +27,22 @@ pnpm add flowgeneration
 yarn add flowgeneration
 ```
 
-For GSAP-powered animations (Pro engine):
-
-```bash
-npm install flowgeneration gsap
-```
+> GSAP is bundled — no separate install needed.
 
 ## Quick Start
-
-### CSS-Only (Core Engine)
 
 Just import — it auto-initializes. No setup function needed.
 
 ```js
-import "flowgeneration/core";
+import "flowgeneration";
 import "flowgeneration/style.css";
 ```
 
 ```html
+<!-- CSS animation — loads instantly -->
 <div data-flowg-anim="fade-up" data-flowg-duration="0.6">Hello World</div>
-```
 
-### With GSAP (Pro Engine)
-
-```js
-import "flowgeneration/pro";
-import "flowgeneration/style.css";
-```
-
-```html
+<!-- GSAP animation — GSAP loaded on demand -->
 <div data-flowg-anim="text-stagger" data-flowg-duration="0.8">
   Staggered text reveal
 </div>
@@ -66,13 +53,12 @@ import "flowgeneration/style.css";
 No init call required — the script auto-detects `data-flowg-*` elements.
 
 ```html
-<!-- Core only (~2KB gzip) -->
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>
+  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg.js"></script>
 
 <div data-flowg-anim="fade-up">Content</div>
 ```
@@ -80,6 +66,16 @@ No init call required — the script auto-detects `data-flowg-*` elements.
 ### Dynamic Elements
 
 FlowG automatically watches for new elements added to the DOM (via MutationObserver). Elements added after page load — from SPA navigation, lazy loading, or JavaScript — are animated automatically.
+
+## How Smart Loading Works
+
+FlowG scans the page for `data-flowg-anim` attributes:
+
+1. **CSS animations** (`fade-up`, `blur-in`, etc.) — handled with pure CSS transitions + IntersectionObserver. Zero GSAP cost.
+2. **GSAP animations** (`split-text`, `scroll-scrub`, etc.) — GSAP core is dynamically imported only if a GSAP animation is found.
+3. **GSAP plugins** (e.g. ScrollTrigger) — loaded only when a specific animation needs them (e.g. `scroll-scrub`).
+
+If your page only uses CSS animations, **no GSAP code is loaded at all**.
 
 ## API — `data-flowg-*` Attributes
 
@@ -92,17 +88,19 @@ FlowG automatically watches for new elements added to the DOM (via MutationObser
 | `data-flowg-offset`   | `20%`                                   | Viewport trigger offset      |
 | `data-flowg-trigger`  | `viewport`, `hover`, `click`            | What starts the animation    |
 
-## CSS Animations (Core)
+## CSS Animations
 
-These work with the lightweight Core engine — no GSAP required:
+These use the lightweight CSS layer — no GSAP loaded:
 
-`fade-up` · `fade-down` · `fade-left` · `fade-right` · `fade-in` · `zoom-in` · `zoom-out` · `slide-up` · `slide-down` · `slide-left` · `slide-right` · `flip-up` · `flip-left` · `blur-in` · `blur-up` · `rotate-in` · `rotate-left` · `bounce-in` · `bounce-up`
+`fade-up` · `fade-down` · `fade-left` · `fade-right` · `fade-in` · `zoom-in` · `zoom-out` · `slide-up` · `slide-down` · `slide-left` · `slide-right` · `flip-up` · `flip-down` · `flip-left` · `flip-right` · `blur-in` · `blur-up` · `rotate-in` · `bounce-in`
 
-## GSAP Animations (Pro)
+## GSAP Animations
 
-These require the Pro engine with GSAP installed:
+These trigger on-demand GSAP loading:
 
-`split-text` · `text-stagger` · `typewriter` · `scroll-scrub` · `physics-bounce` · `stagger-up` · `stagger-fade` · `counter`
+`split-text` · `text-stagger` · `typewriter` · `scroll-scrub`\* · `physics-bounce` · `stagger-up` · `stagger-fade` · `counter`
+
+\* _scroll-scrub also loads the ScrollTrigger plugin automatically_
 
 ## Programmatic API
 
@@ -111,9 +109,9 @@ import {
   activate,
   reset,
   CSS_ANIMATIONS,
+  GSAP_ANIMATIONS,
   ANIMATION_REGISTRY,
-} from "flowgeneration/core";
-import { GSAP_ANIMATIONS } from "flowgeneration/pro";
+} from "flowgeneration";
 
 // Manually trigger an element
 activate(document.querySelector("#my-el"));
@@ -121,10 +119,6 @@ activate(document.querySelector("#my-el"));
 // Reset to pre-animation state
 reset(document.querySelector("#my-el"));
 ```
-
-> **Note:** `initCore()` and `initPro()` are still exported for backward
-> compatibility, but calling them is no longer required. The library
-> auto-initializes when imported.
 
 ## Webflow Integration
 
@@ -142,29 +136,15 @@ Paste this in **Project Settings → Custom Code → Head Code**:
 
 ### Step 2: Add Script (Footer Code)
 
-**For CSS animations only (Core):**
-
 Paste this in **Project Settings → Custom Code → Footer Code**:
 
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>
+  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg.js"></script>
 ```
 
-**For GSAP-powered animations (Pro):**
-
-You must add the GSAP library **before** FlowG Pro. Paste this in **Footer Code**:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script
-  type="module"
-  src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js"></script>
-```
-
-> ⚠️ GSAP must load **before** FlowG Pro. Keep the order above.
-> No `initCore()` or `initPro()` call needed — the scripts auto-initialize.
+> That's it — one script handles everything. GSAP loads automatically if needed.
 
 ### Step 3: Add Attributes to Elements
 
@@ -194,7 +174,7 @@ Full type declarations are included. All exports are fully typed.
 
 ## Browser Support
 
-Works in all browsers supporting `IntersectionObserver` (all modern browsers).
+Works in all browsers supporting `IntersectionObserver` and dynamic `import()` (all modern browsers).
 
 ## Development
 

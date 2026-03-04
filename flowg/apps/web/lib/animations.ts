@@ -86,45 +86,28 @@ export function supportsRepeat(name: string): boolean {
 }
 
 /**
- * Generate the correct <script> tag based on animation type.
- * Provides both standard and Webflow-ready variants.
+ * Generate the correct <script> tag for using FlowG.
+ * The library now uses a single unified entry that loads GSAP
+ * on demand — no need for separate Core/Pro scripts.
  * The library auto-initializes on import — no init call needed.
  */
 export function generateScriptTag(
-  animationType: string,
+  _animationType: string,
   platform: "standard" | "webflow" = "standard",
 ): string {
-  const anim = ANIMATION_REGISTRY.find((a) => a.name === animationType);
-  if (!anim) return "";
-
   if (platform === "webflow") {
-    if (anim.engine === "gsap") {
-      return `<!-- 1. Add FlowG stylesheet (paste in Project Settings → Custom Code → Head) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
-
-<!-- 2. Add GSAP + FlowG Pro (paste in Project Settings → Custom Code → Footer) -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js"></script>`;
-    }
-
     return `<!-- 1. Add FlowG stylesheet (paste in Project Settings → Custom Code → Head) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
 
-<!-- 2. Add FlowG Core (paste in Project Settings → Custom Code → Footer) -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>`;
+<!-- 2. Add FlowG (paste in Project Settings → Custom Code → Footer) -->
+<!-- GSAP is bundled & loaded on demand — only what you use ships to the browser -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg.js"></script>`;
   }
 
   // Standard (npm / CDN)
-  if (anim.engine === "gsap") {
-    return `<!-- FlowG Pro Engine (requires GSAP) — auto-initializes -->
+  return `<!-- FlowG — auto-initializes, GSAP loaded on demand -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-pro.js"></script>`;
-  }
-
-  return `<!-- FlowG Core Engine (~2KB gzipped) — auto-initializes -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg-core.js"></script>`;
+<script type="module" src="https://cdn.jsdelivr.net/npm/flowgeneration@latest/dist/flowg.js"></script>`;
 }
 
 /**

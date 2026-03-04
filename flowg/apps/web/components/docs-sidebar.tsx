@@ -135,11 +135,11 @@ export function DocsSidebar({
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
             <div className="flex items-center gap-1">
               <span className="size-1.5 rounded-full bg-emerald-500" />
-              Core ~2KB
+              CSS ~3KB
             </div>
             <div className="flex items-center gap-1">
               <span className="size-1.5 rounded-full bg-violet-500" />
-              Pro + GSAP
+              GSAP on demand
             </div>
           </div>
         </div>

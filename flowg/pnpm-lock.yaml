@@ -161,7 +161,7 @@ importers:
   packages/flowg:
     dependencies:
       gsap:
-        specifier: ^3.12.0
+        specifier: ^3.14.2
         version: 3.14.2
     devDependencies:
       '@repo/typescript-config':

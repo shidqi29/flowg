@@ -1,15 +1,23 @@
 // ==========================================================
 // FlowG — Animation Registry
-// Maps animation names to their engine type (CSS or GSAP).
+// Maps animation names to their engine type and required GSAP plugins.
 // ==========================================================
 
 export type EngineType = "css" | "gsap";
+
+/**
+ * GSAP plugins that can be dynamically loaded.
+ * Only the plugins actually needed by detected animations are imported.
+ */
+export type GsapPlugin = "ScrollTrigger";
 
 export interface AnimationDef {
   name: string;
   engine: EngineType;
   label: string;
   category: string;
+  /** Which GSAP plugins this animation requires (empty for CSS) */
+  plugins?: GsapPlugin[];
 }
 
 /**
@@ -52,6 +60,14 @@ export const GSAP_ANIMATIONS: string[] = [
 ];
 
 /**
+ * Maps each GSAP animation to the plugins it requires.
+ * Animations not listed here only need gsap core (no extra plugins).
+ */
+export const GSAP_PLUGIN_MAP: Record<string, GsapPlugin[]> = {
+  "scroll-scrub": ["ScrollTrigger"],
+};
+
+/**
  * Full registry with metadata for the web app / configurator.
  */
 export const ANIMATION_REGISTRY: AnimationDef[] = [
@@ -92,7 +108,7 @@ export const ANIMATION_REGISTRY: AnimationDef[] = [
   { name: "typewriter", engine: "gsap", label: "Typewriter", category: "Text" },
 
   // GSAP — Scroll
-  { name: "scroll-scrub", engine: "gsap", label: "Scroll Scrub", category: "Scroll" },
+  { name: "scroll-scrub", engine: "gsap", label: "Scroll Scrub", category: "Scroll", plugins: ["ScrollTrigger"] },
 
   // GSAP — Advanced
   { name: "physics-bounce", engine: "gsap", label: "Physics Bounce", category: "Advanced" },
@@ -122,4 +138,11 @@ export function getEngineType(name: string): EngineType | null {
   if (CSS_ANIMATIONS.includes(name)) return "css";
   if (GSAP_ANIMATIONS.includes(name)) return "gsap";
   return null;
+}
+
+/**
+ * Get the GSAP plugins required for a specific animation.
+ */
+export function getRequiredPlugins(name: string): GsapPlugin[] {
+  return GSAP_PLUGIN_MAP[name] ?? [];
 }

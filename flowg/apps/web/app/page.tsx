@@ -20,21 +20,21 @@ export default function Home() {
             <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
               <div className="hidden sm:flex items-center gap-1.5">
                 <span className="size-2 rounded-full bg-emerald-500" />
-                Core ~2KB
+                CSS ~3KB
               </div>
               <div className="hidden sm:flex items-center gap-1.5">
                 <span className="size-2 rounded-full bg-violet-500" />
-                GSAP Pro
+                GSAP on demand
               </div>
               {/* Mobile compact badges */}
               <div className="flex sm:hidden items-center gap-1.5">
                 <span
                   className="size-2 rounded-full bg-emerald-500"
-                  title="CSS Core ~2KB"
+                  title="CSS ~3KB"
                 />
                 <span
                   className="size-2 rounded-full bg-violet-500"
-                  title="GSAP Pro"
+                  title="GSAP on demand"
                 />
               </div>
               <ThemeToggle />
