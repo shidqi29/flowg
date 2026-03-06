@@ -30,6 +30,16 @@ const DEFAULT_CONFIG: AnimConfig = {
   stagger: "0.08",
   repeat: "0",
   direction: "normal",
+  enabled: {
+    duration: false,
+    delay: false,
+    ease: false,
+    offset: false,
+    trigger: false,
+    stagger: false,
+    repeat: false,
+    direction: false,
+  },
 };
 
 export function Showcase() {
@@ -52,7 +62,16 @@ export function Showcase() {
   const handleSelectAnimation = (anim: AnimationDef) => {
     setActiveSection("animations");
     setSelectedAnimation(anim);
-    setConfig(DEFAULT_CONFIG);
+    // Preserve enabled toggles & their values — only reset disabled fields to defaults
+    setConfig((prev) => ({
+      ...DEFAULT_CONFIG,
+      ...Object.fromEntries(
+        (Object.keys(prev.enabled) as Array<keyof typeof prev.enabled>)
+          .filter((k) => prev.enabled[k])
+          .map((k) => [k, prev[k]]),
+      ),
+      enabled: prev.enabled,
+    }));
     setMobileNavOpen(false);
   };
 

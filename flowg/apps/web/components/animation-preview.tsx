@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { AnimationDef } from "@/lib/animations";
+import type { ConfigField } from "@/components/configurator";
 
 interface AnimationPreviewProps {
   animation: AnimationDef;
@@ -9,6 +10,30 @@ interface AnimationPreviewProps {
   delay?: string;
   ease?: string;
   stagger?: string;
+  repeat?: string;
+  direction?: string;
+  /** Which config fields are enabled — disabled fields use defaults */
+  enabled?: Record<ConfigField, boolean>;
+}
+
+// ── Default values (used when a field is toggled off) ──
+const DEFAULTS = {
+  duration: "0.5",
+  delay: "0",
+  ease: "ease-out",
+  stagger: "0.08",
+  repeat: "0",
+  direction: "normal",
+} as const;
+
+/** Resolve config value: use provided value only when enabled, otherwise use default */
+function resolve<K extends keyof typeof DEFAULTS>(
+  key: K,
+  value: string | undefined,
+  enabled?: Record<string, boolean>,
+): string {
+  if (!enabled || enabled[key]) return value ?? DEFAULTS[key];
+  return DEFAULTS[key];
 }
 
 // ---- GSAP → CSS easing fallback ----
@@ -153,12 +178,16 @@ function StaggerPreview({
   delay,
   ease,
   stagger,
+  repeat,
+  direction,
 }: {
   animation: AnimationDef;
   duration: string;
   delay: string;
   ease: string;
   stagger: string;
+  repeat: string;
+  direction: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -181,6 +210,13 @@ function StaggerPreview({
     const staggerMs = (parseFloat(stagger) || 0.08) * 1000;
     const durSec = duration;
     const easeVal = toCssEasing(ease);
+    const cssRepeat =
+      repeat === "-1"
+        ? "infinite"
+        : repeat === "0"
+          ? "1"
+          : String(parseInt(repeat) + 1);
+    const cssDirection = direction || "normal";
 
     // Reset all children
     children.forEach((child) => {
@@ -197,10 +233,19 @@ function StaggerPreview({
         const animName =
           isStaggerUp || isWordType ? "fg-stagger-up" : "fg-stagger-char";
         const childDelay = i * staggerMs;
-        child.style.animation = `${animName} ${durSec}s ${easeVal} ${childDelay}ms both`;
+        child.style.animation = `${animName} ${durSec}s ${easeVal} ${childDelay}ms ${cssRepeat} ${cssDirection} both`;
       });
     }, delayMs);
-  }, [duration, delay, ease, stagger, isStaggerUp, isWordType]);
+  }, [
+    duration,
+    delay,
+    ease,
+    stagger,
+    repeat,
+    direction,
+    isStaggerUp,
+    isWordType,
+  ]);
 
   useEffect(() => {
     play();
@@ -306,11 +351,15 @@ function DefaultPreview({
   duration,
   delay,
   ease,
+  repeat,
+  direction,
 }: {
   animation: AnimationDef;
   duration: string;
   delay: string;
   ease: string;
+  repeat: string;
+  direction: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const cssEase = toCssEasing(ease);
@@ -336,10 +385,17 @@ function DefaultPreview({
 
     const timer = setTimeout(play, 100);
     return () => clearTimeout(timer);
-  }, [animation.name, duration, delay, cssEase, play]);
+  }, [animation.name, duration, delay, cssEase, repeat, direction, play]);
 
   const durSec = /^\d+(\.\d+)?$/.test(duration) ? `${duration}s` : duration;
   const delSec = /^\d+(\.\d+)?$/.test(delay) ? `${delay}s` : delay;
+  const cssRepeat =
+    repeat === "-1"
+      ? "infinite"
+      : repeat === "0"
+        ? "1"
+        : String(parseInt(repeat) + 1);
+  const cssDirection = direction || "normal";
 
   return (
     <PreviewWrapper
@@ -360,6 +416,8 @@ function DefaultPreview({
             "--fg-dur": durSec,
             "--fg-del": delSec,
             "--fg-ease": cssEase,
+            "--fg-repeat": cssRepeat,
+            "--fg-dir": cssDirection,
           } as React.CSSProperties
         }>
         <div className="text-center px-4 py-6 sm:px-8 sm:py-8">
@@ -413,11 +471,22 @@ function PreviewWrapper({
 // ---- Main Export ----
 export function AnimationPreview({
   animation,
-  duration = "0.5",
-  delay = "0",
-  ease = "ease-out",
-  stagger = "0.08",
+  duration: rawDuration,
+  delay: rawDelay,
+  ease: rawEase,
+  stagger: rawStagger,
+  repeat: rawRepeat,
+  direction: rawDirection,
+  enabled,
 }: AnimationPreviewProps) {
+  // Resolve values: use provided value when enabled, otherwise use default
+  const duration = resolve("duration", rawDuration, enabled);
+  const delay = resolve("delay", rawDelay, enabled);
+  const ease = resolve("ease", rawEase, enabled);
+  const stagger = resolve("stagger", rawStagger, enabled);
+  const repeat = resolve("repeat", rawRepeat, enabled);
+  const direction = resolve("direction", rawDirection, enabled);
+
   switch (animation.previewMode) {
     case "typewriter":
       return <TypewriterPreview duration={duration} delay={delay} />;
@@ -431,6 +500,8 @@ export function AnimationPreview({
           delay={delay}
           ease={ease}
           stagger={stagger}
+          repeat={repeat}
+          direction={direction}
         />
       );
     case "scrub":
@@ -442,6 +513,8 @@ export function AnimationPreview({
           duration={duration}
           delay={delay}
           ease={ease}
+          repeat={repeat}
+          direction={direction}
         />
       );
   }

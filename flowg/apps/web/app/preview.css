@@ -15,7 +15,7 @@
 
 .flowg-preview[data-anim="fade-in"].flowg-active {
   animation: fg-fade-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-fade-in {
   from {
@@ -28,7 +28,7 @@
 
 .flowg-preview[data-anim="fade-up"].flowg-active {
   animation: fg-fade-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-fade-up {
   from {
@@ -43,7 +43,7 @@
 
 .flowg-preview[data-anim="fade-down"].flowg-active {
   animation: fg-fade-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-fade-down {
   from {
@@ -58,7 +58,7 @@
 
 .flowg-preview[data-anim="fade-left"].flowg-active {
   animation: fg-fade-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-fade-left {
   from {
@@ -73,7 +73,7 @@
 
 .flowg-preview[data-anim="fade-right"].flowg-active {
   animation: fg-fade-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-fade-right {
   from {
@@ -90,7 +90,7 @@
 
 .flowg-preview[data-anim="zoom-in"].flowg-active {
   animation: fg-zoom-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-zoom-in {
   from {
@@ -105,7 +105,7 @@
 
 .flowg-preview[data-anim="zoom-out"].flowg-active {
   animation: fg-zoom-out var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-zoom-out {
   from {
@@ -122,7 +122,7 @@
 
 .flowg-preview[data-anim="slide-up"].flowg-active {
   animation: fg-slide-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-slide-up {
   from {
@@ -137,7 +137,7 @@
 
 .flowg-preview[data-anim="slide-down"].flowg-active {
   animation: fg-slide-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-slide-down {
   from {
@@ -152,7 +152,7 @@
 
 .flowg-preview[data-anim="slide-left"].flowg-active {
   animation: fg-slide-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-slide-left {
   from {
@@ -167,7 +167,7 @@
 
 .flowg-preview[data-anim="slide-right"].flowg-active {
   animation: fg-slide-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-slide-right {
   from {
@@ -184,7 +184,7 @@
 
 .flowg-preview[data-anim="flip-up"].flowg-active {
   animation: fg-flip-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-flip-up {
   from {
@@ -199,7 +199,7 @@
 
 .flowg-preview[data-anim="flip-down"].flowg-active {
   animation: fg-flip-down var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-flip-down {
   from {
@@ -214,7 +214,7 @@
 
 .flowg-preview[data-anim="flip-left"].flowg-active {
   animation: fg-flip-left var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-flip-left {
   from {
@@ -229,7 +229,7 @@
 
 .flowg-preview[data-anim="flip-right"].flowg-active {
   animation: fg-flip-right var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-flip-right {
   from {
@@ -246,7 +246,7 @@
 
 .flowg-preview[data-anim="blur-in"].flowg-active {
   animation: fg-blur-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-blur-in {
   from {
@@ -261,7 +261,7 @@
 
 .flowg-preview[data-anim="blur-up"].flowg-active {
   animation: fg-blur-up var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-blur-up {
   from {
@@ -280,7 +280,7 @@
 
 .flowg-preview[data-anim="rotate-in"].flowg-active {
   animation: fg-rotate-in var(--fg-dur, 0.5s) var(--fg-del, 0s)
-    var(--fg-ease, ease-out) both;
+    var(--fg-ease, ease-out) var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-rotate-in {
   from {
@@ -296,7 +296,8 @@
 /* ---- Bounce ---- */
 
 .flowg-preview[data-anim="bounce-in"].flowg-active {
-  animation: fg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s) both;
+  animation: fg-bounce-in var(--fg-dur, 0.6s) var(--fg-del, 0s)
+    var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-bounce-in {
   0% {
@@ -320,7 +321,8 @@
 /* physics-bounce still uses CSS keyframe since it's a visual effect */
 
 .flowg-preview[data-anim="physics-bounce"].flowg-active {
-  animation: fg-physics-bounce var(--fg-dur, 0.8s) var(--fg-del, 0s) both;
+  animation: fg-physics-bounce var(--fg-dur, 0.8s) var(--fg-del, 0s)
+    var(--fg-repeat, 1) var(--fg-dir, normal) both;
 }
 @keyframes fg-physics-bounce {
   0% {

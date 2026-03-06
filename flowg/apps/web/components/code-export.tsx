@@ -27,6 +27,7 @@ export function CodeExport({ animation, config }: CodeExportProps) {
     stagger: config.stagger,
     repeat: config.repeat,
     direction: config.direction,
+    enabled: config.enabled,
   });
 
   const fullSnippet = `${scriptTag}\n\n${htmlSnippet}`;

@@ -123,31 +123,33 @@ export function generateSnippet(config: {
   stagger?: string;
   repeat?: string;
   direction?: string;
+  enabled?: Record<string, boolean>;
 }): string {
   const attrs: string[] = [`data-flowg-anim="${config.anim}"`];
+  const on = config.enabled ?? {};
 
-  if (config.duration && config.duration !== "0.5") {
+  if (on.duration && config.duration) {
     attrs.push(`data-flowg-duration="${config.duration}"`);
   }
-  if (config.delay && config.delay !== "0") {
+  if (on.delay && config.delay) {
     attrs.push(`data-flowg-delay="${config.delay}"`);
   }
-  if (config.ease && config.ease !== "ease-out") {
+  if (on.ease && config.ease) {
     attrs.push(`data-flowg-ease="${config.ease}"`);
   }
-  if (config.offset) {
+  if (on.offset && config.offset) {
     attrs.push(`data-flowg-offset="${config.offset}"`);
   }
-  if (config.trigger && config.trigger !== "viewport") {
+  if (on.trigger && config.trigger) {
     attrs.push(`data-flowg-trigger="${config.trigger}"`);
   }
-  if (config.stagger && config.stagger !== "0") {
+  if (on.stagger && config.stagger) {
     attrs.push(`data-flowg-stagger="${config.stagger}"`);
   }
-  if (config.repeat && config.repeat !== "0") {
+  if (on.repeat && config.repeat) {
     attrs.push(`data-flowg-repeat="${config.repeat}"`);
   }
-  if (config.direction && config.direction !== "normal") {
+  if (on.direction && config.direction) {
     attrs.push(`data-flowg-direction="${config.direction}"`);
   }
 

@@ -33,7 +33,7 @@ export function ContentAnimation({
                 ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
                 : "bg-violet-500/15 text-violet-700 dark:text-violet-400 border-violet-500/20"
             }`}>
-            {animation.engine === "css" ? "CSS Core" : "GSAP Pro"}
+            {animation.engine === "css" ? "CSS" : "GSAP"}
           </Badge>
           <Badge variant="secondary" className="text-xs">
             {animation.category}
@@ -58,6 +58,9 @@ export function ContentAnimation({
             delay={config.delay}
             ease={config.ease}
             stagger={config.stagger}
+            repeat={config.repeat}
+            direction={config.direction}
+            enabled={config.enabled}
           />
         </div>
       </section>
@@ -66,117 +69,42 @@ export function ContentAnimation({
 
       {/* Configuration */}
       <section className="space-y-4">
-        <h2
-          id="anim-config"
-          className="text-lg font-semibold text-foreground scroll-mt-20">
-          Configuration
-        </h2>
+        <div>
+          <h2
+            id="anim-config"
+            className="text-lg font-semibold text-foreground scroll-mt-20">
+            Configuration
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            Toggle attributes on/off to customize. Only enabled attributes
+            appear in the exported code.
+          </p>
+        </div>
 
-        {/* Attribute reference for this animation */}
-        <div id="anim-attributes" className="scroll-mt-20">
-          <h3 className="text-sm font-medium text-foreground mb-3">
-            Available Attributes
-          </h3>
-          <div className="rounded-lg border border-border overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-muted/50">
-                  <th className="text-left p-2.5 font-medium">Attribute</th>
-                  <th className="text-left p-2.5 font-medium">Default</th>
-                  <th className="text-left p-2.5 font-medium hidden sm:table-cell">
-                    Description
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                <tr id="api-anim" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-anim
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">—</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Animation name (required)
-                  </td>
-                </tr>
-                <tr id="api-duration" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-duration
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">0.5s</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Animation duration
-                  </td>
-                </tr>
-                <tr id="api-delay" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-delay
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">0s</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Delay before start
-                  </td>
-                </tr>
-                <tr id="api-ease" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-ease
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">ease-out</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Easing function (CSS or GSAP)
-                  </td>
-                </tr>
-                <tr id="api-offset" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-offset
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">0%</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Viewport trigger offset
-                  </td>
-                </tr>
-                <tr id="api-trigger" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-trigger
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">viewport</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    viewport, hover, or click
-                  </td>
-                </tr>
-                <tr id="api-stagger" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-stagger
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">0.08s</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Stagger delay between children
-                  </td>
-                </tr>
-                <tr id="api-repeat" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-repeat
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">0</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    Repeat count (-1 = infinite)
-                  </td>
-                </tr>
-                <tr id="api-direction" className="scroll-mt-20">
-                  <td className="p-2.5 font-mono text-primary">
-                    data-flowg-direction
-                  </td>
-                  <td className="p-2.5 text-muted-foreground">normal</td>
-                  <td className="p-2.5 text-muted-foreground hidden sm:table-cell">
-                    normal, reverse, or alternate
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        {/* Required attribute — always-on card */}
+        <div
+          id="anim-attributes"
+          className="scroll-mt-20 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-foreground">
+                Animation
+                <span className="ml-1.5 text-[10px] font-normal text-primary/70">
+                  required
+                </span>
+              </span>
+              <span className="text-[10px] font-mono text-muted-foreground">
+                data-flowg-anim
+              </span>
+            </div>
+            <code className="text-xs font-mono text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+              {animation.name}
+            </code>
           </div>
         </div>
 
-        {/* Interactive configurator */}
-        <div className="max-w-md">
+        {/* Interactive configurator (toggleable attributes) */}
+        <div id="api-anim" className="scroll-mt-20">
           <Configurator config={config} onChange={onConfigChange} />
         </div>
       </section>
